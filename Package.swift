@@ -14,13 +14,13 @@ let package = Package(
             targets: ["CleevioUI"]),
     ],
     dependencies: [
-        .package(url: "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioFramework-ios.git", branch: "feature/reworked-cleevio-framework-packages")
+        .package(url: "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioCore.git", .upToNextMajor(from: .init(1, 0, 0)))
     ],
     targets: [
         .target(
             name: "CleevioUI",
             dependencies: [
-                .product(name: "CleevioCore", package: "CleevioFramework-ios")
+                "CleevioCore"
             ]),
         .testTarget(
             name: "CleevioUITests",
