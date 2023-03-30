@@ -21,8 +21,6 @@ public enum AccessibilityIdentifier: CustomStringConvertible {
     case toggle(String)
     case picker(String)
     
-    case screen
-
     public var description: String {
         switch self {
         case .button(let string),
@@ -35,8 +33,6 @@ public enum AccessibilityIdentifier: CustomStringConvertible {
                 .toggle(let string),
                 .picker(let string):
             return "\(typeString).\(string)"
-        case .screen:
-            return typeString
         }
     }
 
@@ -60,8 +56,6 @@ public enum AccessibilityIdentifier: CustomStringConvertible {
             return "toggle"
         case .picker:
             return "picker"
-        case .screen:
-            return "screen"
         }
     }
 }
