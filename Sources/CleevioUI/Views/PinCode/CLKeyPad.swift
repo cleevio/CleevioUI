@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 
+@available(*, deprecated, message: "It should be rewritten before using Bindings, no need for geometry reader")
 public struct CLKeyPad: View {
     var keyTap: PassthroughSubject<Int, Never>
     var deleteTap: PassthroughSubject<Void, Never>
