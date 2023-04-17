@@ -22,8 +22,6 @@ open class CircleProgressAppearance: ObservableObject {
     @Published public var textLineLimit: Int?
     
     @Published public var reverseProgress: Bool = false
-    
-    static public var `default`: CircleProgressAppearance {
-        CircleProgressAppearance()
-    }
+
+    public init() { }
 }

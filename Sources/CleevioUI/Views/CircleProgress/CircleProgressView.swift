@@ -7,14 +7,14 @@
 import SwiftUI
 import Combine
 
-public struct CircleProgressView<Strategy: CircularProgressBarStategyType>: View {
+public struct CircleProgressView<Strategy: CircularProgressBarStategy>: View {
     @ObservedObject public var strategy: Strategy
     @ObservedObject public var appereance: CircleProgressAppearance
     
-    public init(strategy: Strategy,
-                appereance: CircleProgressAppearance = .default) {
+    public init?(strategy: Strategy,
+                 appereance: CircleProgressAppearance = .init()) {
         guard strategy.progressStart < strategy.progressEnd else {
-            fatalError("Progress start must be lower than progress end")
+            return nil
         }
         
         self.strategy = strategy
@@ -31,7 +31,7 @@ public struct CircleProgressView<Strategy: CircularProgressBarStategyType>: View
     }
     
     private var text: some View {
-        Text(strategy.localizedTitle)
+        Text(strategy.title ?? "")
             .foregroundColor(appereance.textColor)
             .font(appereance.textFont)
             .fontWeight(appereance.textWeight)

@@ -6,6 +6,7 @@
 
 import SwiftUI
 
+// TODO: Consider if its worth keeping after CleevioUI updates, not giving much currently
 public struct CLTextField: View {
     var text: Binding<String>
     var placeholder: String

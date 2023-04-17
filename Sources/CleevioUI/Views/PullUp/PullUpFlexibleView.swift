@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(*, deprecated, message: "Quite laggy solution, consider using FloatingPanelRouter that has very similar functionality with much better performance")
 public struct PullUpFlexibleView<Content: View>: View {
     private let content: Content
     private let supportedPositions: [PullUpFlexiblePosition]
