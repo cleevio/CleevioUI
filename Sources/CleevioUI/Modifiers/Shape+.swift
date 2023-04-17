@@ -8,6 +8,7 @@
 import SwiftUI
 
 extension Shape {
+    @inlinable
     public func style<StrokeContent: ShapeStyle, FillContent: ShapeStyle>(
         withStroke strokeContent: StrokeContent,
         lineWidth: CGFloat = 1,
