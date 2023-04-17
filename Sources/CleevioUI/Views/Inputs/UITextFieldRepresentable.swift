@@ -38,7 +38,7 @@ public struct UITextFieldRepresentable: UIViewRepresentable {
     public func makeUIView(context: Context) -> UITextField {
         let textField = uiTextField(context)
         textField.placeholder = placeholder
-        textField.addTarget(context.coordinator, action: #selector(Coordinator.onTextChange), for: .editingChanged)
+        textField.addTarget(context.coordinator, action: #selector(BaseUITextFieldDelegate.onTextChange), for: .editingChanged)
 
         return textField
     }
@@ -49,23 +49,23 @@ public struct UITextFieldRepresentable: UIViewRepresentable {
         updateUIViewAction?(textField, context)
     }
     
-    public func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+    public func makeCoordinator() -> BaseUITextFieldDelegate {
+        BaseUITextFieldDelegate(self)
+    }
+}
+
+open class BaseUITextFieldDelegate: NSObject, UITextFieldDelegate {
+    private(set) public var parent: UITextFieldRepresentable
+    
+    public init(_ parent: UITextFieldRepresentable) {
+        self.parent = parent
     }
 
-    public final class Coordinator: NSObject, UITextFieldDelegate {
-        var parent: UITextFieldRepresentable
-        
-        init(_ parent: UITextFieldRepresentable) {
-            self.parent = parent
-        }
-
-        @objc
-        func onTextChange(textField: UITextField) {
-            let newText = textField.text ?? ""
-            if parent.text != newText {
-                parent.text = newText
-            }
+    @objc
+    public func onTextChange(textField: UITextField) {
+        let newText = textField.text ?? ""
+        if parent.text != newText {
+            parent.text = newText
         }
     }
 }
