@@ -7,6 +7,7 @@
 import SwiftUI
 
 // TODO: Consider if its worth keeping after CleevioUI updates, not giving much currently
+@available(iOS 15.0, *)
 public struct CLTextField: View {
     var text: Binding<String>
     var placeholder: String
@@ -47,6 +48,7 @@ public struct CLTextField: View {
 }
 
 #if DEBUG
+@available(iOS 15.0, *)
 struct ClTextField_Previews : PreviewProvider {
     @State static var value = ""
 
