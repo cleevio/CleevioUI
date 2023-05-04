@@ -209,6 +209,10 @@ struct SolidButton_Previews: PreviewProvider {
                 )
             }
         }
+
+        var loadingCircleColor: Color {
+            self == .outline ? .black : .white
+        }
     }
     
     static var previews: some View {
@@ -220,7 +224,7 @@ struct SolidButton_Previews: PreviewProvider {
                         labelTextColorSet: style.labelTextColorSet,
                         labelColorSet: style.labelColorSet,
                         outlineColorSet: style.outlineColorSet,
-                        loadingCircleColor: style == SolidPreviewStyle.outline ? .black : .white,
+                        loadingCircleColor: style.loadingCircleColor,
                         verticalPadding: 12,
                         horizontalPadding: 20,
                         fullWidth: false
