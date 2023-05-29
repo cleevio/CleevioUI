@@ -14,7 +14,7 @@ let package = Package(
             targets: ["CleevioUI"]),
     ],
     dependencies: [
-        .package(url: "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioCore.git", .upToNextMajor(from: .init(1, 0, 0)))
+        .package(url: "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioCore.git", .upToNextMajor(from: .init(2, 0, 0)))
     ],
     targets: [
         .target(

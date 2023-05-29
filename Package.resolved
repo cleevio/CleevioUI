@@ -6,8 +6,8 @@
         "repositoryURL": "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioCore.git",
         "state": {
           "branch": null,
-          "revision": "b7c3a7ead803933f75633384acd1686714ebfbd3",
-          "version": "1.2.0"
+          "revision": "bf954d52568ada38301f4845427dce68c936a224",
+          "version": "2.1.0"
         }
       }
     ]
