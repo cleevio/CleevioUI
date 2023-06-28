@@ -9,6 +9,24 @@
           "revision": "cdc4f48b9412f67eee2678fc445a7a578c4972b7",
           "version": "2.1.2"
         }
+      },
+      {
+        "package": "CleevioRoutersLibrary",
+        "repositoryURL": "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioRouters.git",
+        "state": {
+          "branch": null,
+          "revision": "ed0d1a82026043437d620a4b3f9dbd4fb87f4796",
+          "version": "2.1.5"
+        }
+      },
+      {
+        "package": "FloatingPanel",
+        "repositoryURL": "https://github.com/scenee/FloatingPanel",
+        "state": {
+          "branch": null,
+          "revision": "a0ba3af01207d21bb4800dda9f900470e1921613",
+          "version": "2.6.2"
+        }
       }
     ]
   },
