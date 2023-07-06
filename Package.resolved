@@ -15,8 +15,8 @@
         "repositoryURL": "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioRouters.git",
         "state": {
           "branch": null,
-          "revision": "ed0d1a82026043437d620a4b3f9dbd4fb87f4796",
-          "version": "2.1.5"
+          "revision": "33c3e36f99b54cb42904a2aed80119722b4a17ac",
+          "version": "2.2.0-dev1"
         }
       },
       {

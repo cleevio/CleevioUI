@@ -18,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioCore.git", .upToNextMajor(from: Version(2, 0, 0))),
-        .package(url: "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioRouters.git", .upToNextMajor(from: Version(2, 0, 0)))
+        .package(url: "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioRouters.git", .upToNextMajor(from: "2.2.0-dev1"))
     ],
     targets: [
         .target(

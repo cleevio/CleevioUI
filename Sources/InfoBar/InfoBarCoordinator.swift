@@ -35,7 +35,7 @@ open class InfoBarCoordinator<InfoBarView: View, InfoBarContent>: RouterCoordina
         super.init(router: router)
     }
 
-    open override func start() {
+    open override func start(animated: Bool = true) {
         let view = viewBuilder(viewModel)
 
         let viewController = InfoBarViewController(
@@ -52,7 +52,7 @@ open class InfoBarCoordinator<InfoBarView: View, InfoBarContent>: RouterCoordina
             })
             .store(in: cancelBag)
 
-        present(viewController)
+        present(viewController, animated: animated)
     }
 
     open func startAndWaitForDismiss() async {

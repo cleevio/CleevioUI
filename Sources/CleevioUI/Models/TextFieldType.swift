@@ -5,6 +5,7 @@
 //  Created by Thành Đỗ Long on 30.11.2020.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public enum TextFieldType {
@@ -60,3 +61,4 @@ public enum TextFieldType {
         }
     }
 }
+#endif
