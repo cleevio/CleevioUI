@@ -1,3 +1,5 @@
+import SwiftUI
+
 public struct RoundedStroke: View {
     var color: Color
     var cornerRadius: CGFloat

@@ -11,15 +11,15 @@ public extension View {
     /// - Returns: A modified view with the conditional overlay.
     ///
     /// - Note: If `condition` is `true`, the `content` view will be overlaid on top of the original view with the specified `alignment`. If `condition` is `false`, the overlay will not be added, and the original view remains unchanged.
-    func overlay<V>(
-        if condition: Bool,
-        alignment: Alignment = .center,
-        @ViewBuilder content: () -> V
-    ) -> some View where V : View {
-        overlay(alignment: alignment) {
-            if condition {
-                content()
+    @ViewBuilder func overlay<V>(if condition: Bool, alignment: Alignment = .center, @ViewBuilder content: () -> V) -> some View where V : View {
+        if #available(iOS 15.0, *) {
+            overlay(alignment: alignment) {
+                if condition {
+                    content()
+                }
             }
+        } else {
+            overlay(content(), alignment: alignment)
         }
     }
 }
