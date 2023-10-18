@@ -1,6 +1,6 @@
 import SwiftUI
 
-public extension SolidButtonStyle where Background == Color, Overlay == RoundedStroke, LoadingView == EmptyView {
+public extension SolidButtonStyle where Background == Color, Overlay == RoundedStroke, LoadingView == LoadingView {
     init(
         foregroundColorSet: ButtonStateColorSet,
         backgroundColorSet: ButtonStateColorSet,
