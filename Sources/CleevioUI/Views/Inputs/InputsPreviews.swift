@@ -1,7 +1,7 @@
 import SwiftUI
 
 @available(iOS 15.0, *)
-fileprivate extension CleevioTextField<Text, EmptyView, RoundedStroke, Text, ForegroundColorImage> {
+fileprivate extension CleevioTextField<Text, Color, RoundedStroke, Text, ForegroundColorImage> {
     init(
         type: SecureFieldType = .normal,
         title: String,
@@ -18,6 +18,12 @@ fileprivate extension CleevioTextField<Text, EmptyView, RoundedStroke, Text, For
                 focused: .white,
                 error: .red,
                 disabled: .gray.opacity(0.5)
+            ),
+            backgroundColorSet: .init(
+                unfocused: .clear,
+                focused: .clear,
+                error: .clear,
+                disabled: .clear
             ),
             placeholderColorSet: .init(
                 unfocused: .gray,
