@@ -1,0 +1,227 @@
+import SwiftUI
+
+/// A customizable input field style serving as a wrapper for various types such as `TextField` or `Picker`.
+///
+/// This structure provides a way to define the appearance and behavior of input fields, including customizability based on different states such as focused, enabled, or error.
+///
+/// Usage:
+/// - Create a `CleevioInputField` with custom content, appearance, and behavior.
+/// - Configure the title, text color, background, overlay, error label, and other properties to suit your needs.
+/// - The input field can automatically handle focus and error states, making it suitable for various forms and data entry scenarios.
+///
+/// Example:
+/// ```swift
+/// let configuration = CleevioInputField.Configuration(
+///     title: {
+///         Text("Email")
+///     },
+///     foreground: { state in
+///         state.isError ? .red : .primary
+///     },
+///     background: { state in
+///         RoundedRectangle(cornerRadius: 8)
+///             .fill(state.isFocused ? .blue : .gray)
+///     },
+///     overlay: { state in
+///         RoundedRectangle(cornerRadius: 8)
+///             .stroke(state.isFocused ? .blue : .gray, lineWidth: 2)
+///     },
+///     errorLabel: { error in
+///         Text(error)
+///             .foregroundColor(.red)
+///     },
+///     isFocused: false,
+///     contentPadding: .all(8),
+///     font: .body
+/// )
+///
+/// CleevioInputField(content: { state in
+///     TextField("Enter your email", text: $email)
+///         .keyboardType(.emailAddress)
+/// }, configuration: configuration)
+/// ```
+///
+@available(iOS 15.0, *)
+public struct CleevioInputField<
+    Content: View,
+    Title: View,
+    Background: View,
+    Overlay: View,
+    ErrorLabel: View
+>: View {
+    public struct Configuration {
+        var title: Title
+        @ViewBuilder var foreground: (InputFieldState) -> Color
+        @ViewBuilder var background: (InputFieldState) -> Background
+        @ViewBuilder var overlay: (InputFieldState) -> Overlay
+        @ViewBuilder var errorLabel: (String) -> ErrorLabel
+
+        /// When @FocusState is not available, this value is used to invoke focus state appearance/behavior
+        var isExternallyFocused: Bool = false
+        var contentPadding: EdgeInsets
+        var font: Font
+
+        public init(
+            @ViewBuilder title: () -> Title,
+            @ViewBuilder foreground: @escaping (InputFieldState) -> Color,
+            @ViewBuilder background: @escaping (InputFieldState) -> Background,
+            @ViewBuilder overlay: @escaping (InputFieldState) -> Overlay,
+            @ViewBuilder errorLabel: @escaping (String) -> ErrorLabel,
+            isFocused: Bool,
+            contentPadding: EdgeInsets,
+            font: Font
+        ) {
+            self.title = title()
+            self.foreground = foreground
+            self.background = background
+            self.overlay = overlay
+            self.errorLabel = errorLabel
+            self.isExternallyFocused = isFocused
+            self.contentPadding = contentPadding
+            self.font = font
+        }
+    }
+
+    @ViewBuilder var content: (InputFieldState) -> Content
+    var configuration: Configuration
+
+    @FocusState private var isFocused: Bool
+    @Environment(\.stringError) private var error: String?
+    @Environment(\.isEnabled) private var isEnabled
+
+    public init(
+        @ViewBuilder content: @escaping (InputFieldState) -> Content,
+        configuration: Configuration
+    ) {
+        self.content = content
+        self.configuration = configuration
+    }
+
+    var state: InputFieldState {
+        .init(
+            isFocused: isFocused || configuration.isExternallyFocused,
+            isEnabled: isEnabled,
+            isError: error != nil
+        )
+    }
+
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            configuration.title
+
+            content(state)
+                .focused($isFocused)
+                .padding(configuration.contentPadding)
+                .background(configuration.background(state))
+                .overlay { configuration.overlay(state) }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    isFocused = true
+                }
+
+            if let error {
+                configuration.errorLabel(error)
+                    .transition(
+                        .asymmetric(
+                            insertion: .move(edge: .leading),
+                            removal: .move(edge: .leading)
+                        )
+                    )
+            }
+        }
+        .foregroundStyle(configuration.foreground(state))
+        .tint(configuration.foreground(state))
+        .font(configuration.font)
+        .animation(.default, value: error)
+        .animation(.easeInOut, value: state.isFocused)
+        .animation(.easeInOut, value: isEnabled)
+    }
+}
+
+// MARK: - Helpers
+
+@available(iOS 15.0, *)
+extension CleevioInputField {
+    init<ButtonLabel: View>(
+        type: CleevioTextFieldType,
+        placeholder: @escaping (InputFieldState) -> Text?,
+        text: Binding<String>,
+        revealTextFieldLabel: @escaping (InputFieldState) -> ((CleevioTextFieldType) -> ButtonLabel),
+        configuration: Configuration
+    ) where Content == CleevioTextField<ButtonLabel> {
+        self.init(
+            content: { state in
+                CleevioTextField("", text: text, prompt: placeholder(state), type: type, buttonLabel: revealTextFieldLabel(state))
+            },
+            configuration: configuration
+        )
+    }
+}
+
+@available(iOS 15.0, *)
+public extension CleevioInputField.Configuration where Content: View, Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text {
+    init(
+        title: () -> Title,
+        foregroundColorSet: InputFieldStateColorSet,
+        backgroundColorSet: InputFieldStateColorSet,
+        strokeColorSet: InputFieldStateColorSet,
+        isFocused: Bool,
+        contentPadding: EdgeInsets,
+        font: Font,
+        cornerRadius: CGFloat
+    ) {
+        self.init(
+            title: title,
+            foreground: foregroundColorSet.resolve,
+            background: backgroundColorSet.resolve,
+            overlay: {
+                RoundedStroke(
+                    color: strokeColorSet.resolve($0),
+                    cornerRadius: cornerRadius
+                )
+            },
+            errorLabel: { Text($0) },
+            isFocused: isFocused,
+            contentPadding: contentPadding,
+            font: font
+        )
+    }
+}
+
+@available(iOS 15.0, *)
+public extension CleevioInputField where Content == CleevioTextField<RevealTextFieldIcon>, Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text {
+    init(
+        type: CleevioTextFieldType = .normal,
+        placeholder: String?,
+        text: Binding<String>,
+        placeholderColorSet: InputFieldStateColorSet,
+        revealTextFieldLabelColorSet: InputFieldStateColorSet,
+        configuration: Configuration
+    ) {
+        self.init(
+            type: type,
+            placeholder: { state in
+                let color: Color = placeholderColorSet.resolve(state)
+                return placeholder.map {
+                    if #available(iOS 17.0, *) {
+                        Text($0).foregroundStyle(color).font(configuration.font)
+                    } else {
+                        Text($0).foregroundColor(color).font(configuration.font)
+                    }
+                }
+            },
+            text: text,
+            revealTextFieldLabel: { state in
+                { type in
+                    RevealTextFieldIcon.systemEye(
+                        CleevioTextFieldType: type,
+                        configuration: .init(
+                            foregroundColor: revealTextFieldLabelColorSet.resolve(state)
+                        )
+                    )
+                }
+            },
+            configuration: configuration
+        )
+    }
+}
