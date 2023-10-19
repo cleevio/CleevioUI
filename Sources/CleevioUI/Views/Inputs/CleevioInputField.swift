@@ -141,52 +141,6 @@ public struct CleevioInputField<
 // MARK: - Helpers
 
 @available(iOS 15.0, *)
-extension CleevioInputField {
-    /// Creates a `CleevioInputField` with a specific `CleevioTextField` content for convenience.
-    ///
-    /// This initializer simplifies the creation of a `CleevioInputField` with a `CleevioTextField` as its content, providing a type-specific input field with various customization options.
-    /// It is particularly useful for creating input fields that require additional buttons, such as secure text fields with reveal buttons.
-    ///
-    /// - Parameters:
-    ///   - type: The type of the input field (e.g., secure text, plain text).
-    ///   - placeholder: A function builder to define the placeholder text based on the input field state.
-    ///   - text: A binding to the text entered in the input field.
-    ///   - revealTextFieldLabel: A function builder to define the reveal button label based on the input field state.
-    ///   - configuration: The configuration for the `CleevioInputField`.
-    ///
-    /// Example:
-    /// ```swift
-    /// CleevioInputField(
-    ///     type: .secure,
-    ///     placeholder: { state in
-    ///         state.isFocused ? Text("Enter your password") : Text("Password")
-    ///     },
-    ///     text: $password,
-    ///     revealTextFieldLabel: { state in
-    ///         { type in
-    ///             Image(systemName: type == .secure ? "eye.slash" : "eye")
-    ///         }
-    ///     },
-    ///     configuration: configuration
-    /// )
-    /// ```
-    init<ButtonLabel: View>(
-        type: CleevioTextFieldType,
-        placeholder: @escaping (InputFieldState) -> Text?,
-        text: Binding<String>,
-        revealTextFieldLabel: @escaping (InputFieldState) -> ((CleevioTextFieldType) -> ButtonLabel),
-        configuration: Configuration
-    ) where Content == CleevioTextField<ButtonLabel> {
-        self.init(
-            content: { state in
-                CleevioTextField("", text: text, prompt: placeholder(state), type: type, buttonLabel: revealTextFieldLabel(state))
-            },
-            configuration: configuration
-        )
-    }
-}
-
-@available(iOS 15.0, *)
 public extension CleevioInputField.Configuration where Content: View, Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text {
     /// Creates a `CleevioInputField.Configuration` with specific color sets and visual properties for convenience.
     ///
@@ -229,7 +183,7 @@ public extension CleevioInputField.Configuration where Content: View, Title: Vie
         foregroundColorSet: InputFieldStateColorSet,
         backgroundColorSet: InputFieldStateColorSet,
         strokeColorSet: InputFieldStateColorSet,
-        isFocused: Bool,
+        isFocused: Bool = false,
         contentPadding: EdgeInsets,
         font: Font,
         cornerRadius: CGFloat
@@ -248,6 +202,52 @@ public extension CleevioInputField.Configuration where Content: View, Title: Vie
             isFocused: isFocused,
             contentPadding: contentPadding,
             font: font
+        )
+    }
+}
+
+@available(iOS 15.0, *)
+extension CleevioInputField {
+    /// Creates a `CleevioInputField` with a specific `CleevioTextField` content for convenience.
+    ///
+    /// This initializer simplifies the creation of a `CleevioInputField` with a `CleevioTextField` as its content, providing a type-specific input field with various customization options.
+    /// It is particularly useful for creating input fields that require additional buttons, such as secure text fields with reveal buttons.
+    ///
+    /// - Parameters:
+    ///   - type: The type of the input field (e.g., secure text, plain text).
+    ///   - placeholder: A function builder to define the placeholder text based on the input field state.
+    ///   - text: A binding to the text entered in the input field.
+    ///   - revealTextFieldLabel: A function builder to define the reveal button label based on the input field state.
+    ///   - configuration: The configuration for the `CleevioInputField`.
+    ///
+    /// Example:
+    /// ```swift
+    /// CleevioInputField(
+    ///     type: .secure,
+    ///     placeholder: { state in
+    ///         state.isFocused ? Text("Enter your password") : Text("Password")
+    ///     },
+    ///     text: $password,
+    ///     revealTextFieldLabel: { state in
+    ///         { type in
+    ///             Image(systemName: type == .secure ? "eye.slash" : "eye")
+    ///         }
+    ///     },
+    ///     configuration: configuration
+    /// )
+    /// ```
+    init<ButtonLabel: View>(
+        type: CleevioTextFieldType,
+        placeholder: @escaping (InputFieldState) -> Text?,
+        text: Binding<String>,
+        revealTextFieldLabel: @escaping (InputFieldState) -> ((CleevioTextFieldType) -> ButtonLabel),
+        configuration: Configuration
+    ) where Content == CleevioTextField<ButtonLabel> {
+        self.init(
+            content: { state in
+                CleevioTextField("", text: text, prompt: placeholder(state), type: type, buttonLabel: revealTextFieldLabel(state))
+            },
+            configuration: configuration
         )
     }
 }

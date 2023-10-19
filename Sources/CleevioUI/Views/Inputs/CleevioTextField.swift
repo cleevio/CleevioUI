@@ -193,9 +193,7 @@ public struct RevealTextFieldIcon: View {
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(size: configuration.size, alignment: .center)
-            .background(Color.white)
             .frame(size: configuration.tappableSize, alignment: .center)
-            .background(Color.green)
     }
 
     public var body: some View {
