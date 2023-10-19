@@ -161,13 +161,14 @@ public struct ForegroundColorImage: View {
 }
 
 @available(iOS 15.0, *)
-public extension CleevioTextField<Text, EmptyView, RoundedStroke, Text, ForegroundColorImage> {
+public extension CleevioTextField<Text, Color, RoundedStroke, Text, ForegroundColorImage> {
     init(
         type: SecureFieldType = .normal,
         title: String,
         placeholder: String?,
         text: Binding<String>,
         foregroundColorSet: TextFieldStateColorSet,
+        backgroundColorSet: TextFieldStateColorSet,
         placeholderColorSet: TextFieldStateColorSet,
         strokeColorSet: TextFieldStateColorSet,
         revealTextFieldLabelColorSet: TextFieldStateColorSet,
@@ -190,7 +191,7 @@ public extension CleevioTextField<Text, EmptyView, RoundedStroke, Text, Foregrou
             },
             title: { Text(title) },
             foreground: foregroundColorSet.resolve,
-            background: { _ in EmptyView() },
+            background: backgroundColorSet.resolve,
             overlay: {
                 RoundedStroke(
                     color: strokeColorSet.resolve($0),
