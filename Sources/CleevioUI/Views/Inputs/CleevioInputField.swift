@@ -207,7 +207,7 @@ public extension CleevioInputField.Configuration where Content: View, Title: Vie
 }
 
 @available(iOS 15.0, *)
-extension CleevioInputField {
+public extension CleevioInputField {
     /// Creates a `CleevioInputField` with a specific `CleevioTextField` content for convenience.
     ///
     /// This initializer simplifies the creation of a `CleevioInputField` with a `CleevioTextField` as its content, providing a type-specific input field with various customization options.
