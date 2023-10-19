@@ -18,7 +18,11 @@ public extension View {
                 content()
             }
         }
-        
-        return overlay(overlayContent, alignment: alignment)
+    
+        if #available(iOS 15.0, *) {
+            return overlay(alignment: alignment, content: { overlayContent })
+        } else {
+            return overlay(overlayContent, alignment: alignment)
+        }
     }
 }
