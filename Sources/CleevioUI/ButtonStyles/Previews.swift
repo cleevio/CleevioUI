@@ -231,10 +231,9 @@ struct SolidButton_Previews: PreviewProvider {
                     fullWidth: false
                 ))
                 .disabled(true)
-
-                .padding()
-                .previewDisplayName("\(style)")
             }
+            .padding()
+            .previewDisplayName("\(style)")
         }
     }
 }
