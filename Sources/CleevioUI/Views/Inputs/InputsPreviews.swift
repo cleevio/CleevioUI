@@ -1,7 +1,7 @@
 import SwiftUI
 
 @available(iOS 15.0, *)
-fileprivate extension CleevioTextField<Text, Color, RoundedStroke, Text, ForegroundColorImage> {
+fileprivate extension CleevioTextField<Text, Color, RoundedStroke, Text, RevealTextFieldIcon> {
     init(
         type: SecureFieldType = .normal,
         title: String,

@@ -120,20 +120,12 @@ public struct RevealTextField<ButtonLabel: View>: View {
         }
         .onChange(of: type) { _ in
             guard isFocused else { return }
-            // why are we setting what has already been set to true?
+            // since previously focused TextField is getting destroyed (SecureTextField and TextField are different types)
+            // and is leaving View hierarchy, we want to set the focus to the "new one" so that pressing in label does not lose focus.
             DispatchQueue.main.async {
                 self.isFocused = true
             }
         }
-    }
-}
-
-@available(iOS 15.0, *)
-extension RevealTextField where ButtonLabel == Image {
-    public init(_ placeholder: String, text: Binding<String>, buttonLabel: ((SecureFieldType) -> Image)?) {
-        self.placeholder = placeholder
-        self._text = text
-        self.buttonLabel = buttonLabel ?? RevealTextFieldLabel.systemEye
     }
 }
 
@@ -153,14 +145,64 @@ public enum SecureFieldType {
     case reveal
 }
 
-public enum RevealTextFieldLabel {
-    public static func systemEye(secureFieldType type: SecureFieldType) -> Image {
-        Image(systemName: type == .secure ? "eye.slash" : "eye")
+public struct RevealTextFieldIcon: View {
+    public struct Configuration {
+        var size: CGSize
+        var tappableSize: CGSize
+        var foregroundColor: Color
+
+        public init(
+            size: CGSize = .init(width: 24, height: 24),
+            tappableSize: CGSize = .init(width: 40, height: 40),
+            foregroundColor: Color
+        ) {
+            self.size = size
+            self.tappableSize = tappableSize
+            self.foregroundColor = foregroundColor
+        }
     }
 
-    public static func customEye(_ eye: Image, crossed: Image) -> (SecureFieldType) -> Image {
+    var icon: Image
+    var configuration: Configuration
+
+    public init(_ icon: Image, configuration: Configuration) {
+        self.icon = icon
+        self.configuration = configuration
+    }
+
+    public var sizedIcon: some View {
+        icon
+            .resizable()
+            .frame(size: configuration.size, alignment: .center)
+            .frame(size: configuration.tappableSize, alignment: .center)
+    }
+
+    public var body: some View {
+        Group {
+            if #available(iOS 15.0, *) {
+                sizedIcon.foregroundStyle(configuration.foregroundColor)
+            } else {
+                sizedIcon.foregroundColor(configuration.foregroundColor)
+            }
+        }
+        .contentShape(Rectangle())
+    }
+}
+
+extension RevealTextFieldIcon {
+    public static func systemEye(secureFieldType type: SecureFieldType, configuration: Configuration) -> Self {
+        .init(
+            Image(systemName: type == .secure ? "eye.slash" : "eye"),
+            configuration: configuration
+        )
+    }
+
+    public static func customEye(_ eye: Image, crossed: Image, configuration: Configuration) -> (SecureFieldType) -> Self {
         { type in
-            type == .secure ? eye : crossed
+            .init(
+                type == .secure ? crossed : eye,
+                configuration: configuration
+            )
         }
     }
 }

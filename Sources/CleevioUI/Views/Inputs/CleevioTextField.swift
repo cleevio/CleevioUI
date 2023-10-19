@@ -161,7 +161,7 @@ public struct ForegroundColorImage: View {
 }
 
 @available(iOS 15.0, *)
-public extension CleevioTextField<Text, Color, RoundedStroke, Text, ForegroundColorImage> {
+public extension CleevioTextField<Text, Color, RoundedStroke, Text, RevealTextFieldIcon> {
     init(
         type: SecureFieldType = .normal,
         title: String,
@@ -194,7 +194,7 @@ public extension CleevioTextField<Text, Color, RoundedStroke, Text, ForegroundCo
 }
 
 @available(iOS 15.0, *)
-public extension CleevioTextField where Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text, RevealLabel == ForegroundColorImage {
+public extension CleevioTextField where Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text, RevealLabel == RevealTextFieldIcon {
     init(
         type: SecureFieldType = .normal,
         title: () -> Title,
@@ -234,9 +234,11 @@ public extension CleevioTextField where Title: View, Background == Color, Overla
             errorLabel: { Text($0) },
             revealTextFieldLabel: { state in
                 { type in
-                    ForegroundColorImage(
-                        image: RevealTextFieldLabel.systemEye(secureFieldType: type),
-                        color: revealTextFieldLabelColorSet.resolve(state)
+                    RevealTextFieldIcon.systemEye(
+                        secureFieldType: type,
+                        configuration: .init(
+                            foregroundColor: revealTextFieldLabelColorSet.resolve(state)
+                        )
                     )
                 }
             },
