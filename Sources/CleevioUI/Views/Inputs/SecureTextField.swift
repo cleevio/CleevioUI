@@ -18,16 +18,17 @@ public struct SecureTextField<ButtonLabel: View>: View {
     ///   - text: A binding to the entered text.
     ///   - type: The type of the text field.
     ///   - configuration: The configuration for the button label used to reveal the text.
-    public init(_ placeholder: String, text: Binding<String>, type: SecureFieldType = .normal, configuration: RevealTextFieldLabelConfiguration<ButtonLabel>) {
+    public init(_ placeholder: String, text: Binding<String>, prompt: Text?, type: SecureFieldType = .normal, @ViewBuilder buttonLabel: @escaping (SecureFieldType) -> ButtonLabel) {
         self.placeholder = placeholder
         self._text = text
         self.type = type
-        self.buttonLabel = configuration
+        self.prompt = prompt
+        self.buttonLabel = buttonLabel
     }
     
     /// The configuration for the button label used to reveal the text.
-    var buttonLabel: RevealTextFieldLabelConfiguration<ButtonLabel>
-    
+    @ViewBuilder var buttonLabel: (SecureFieldType) -> ButtonLabel
+
     /// The placeholder text to display when the text field is empty.
     public var placeholder: String
     
@@ -38,19 +39,17 @@ public struct SecureTextField<ButtonLabel: View>: View {
     public var type: SecureFieldType = .normal
     
     /// The prompt text to display when the text field is empty.
-    private var textFieldPrompt: Text {
-        Text(placeholder)
-    }
-    
+    private var prompt: Text?
+
     /// The body of the text field view.
     public var body: some View {
         switch type {
         case .normal:
-            TextField(text: $text, prompt: textFieldPrompt, label: { Text(placeholder) })
+            TextField(text: $text, prompt: prompt, label: { Text(placeholder) })
         case .secure:
-            SecureField(text: $text, prompt: textFieldPrompt, label: { Text(placeholder) })
+            SecureField(text: $text, prompt: prompt, label: { Text(placeholder) })
         case .reveal:
-            RevealTextField(placeholder, text: $text, configuration: buttonLabel)
+            RevealTextField(placeholder, text: $text, prompt: prompt, buttonLabel: buttonLabel)
         }
     }
 }
@@ -65,11 +64,11 @@ extension SecureTextField where ButtonLabel == Image {
     ///   - text: A binding to the entered text.
     ///   - type: The type of the text field.
     ///   - configuration: The configuration for the button label used to reveal the text.
-    public init(_ placeholder: String, text: Binding<String>, type: SecureFieldType = .normal, configuration: RevealTextFieldLabelConfiguration<Image>? = nil) {
+    public init(_ placeholder: String, text: Binding<String>, type: SecureFieldType = .normal, image: @escaping (SecureFieldType) -> Image) {
         self.placeholder = placeholder
         self._text = text
         self.type = type
-        self.buttonLabel = configuration ?? .init()
+        self.buttonLabel = image
     }
 }
 
@@ -81,8 +80,8 @@ public struct RevealTextField<ButtonLabel: View>: View {
     public var placeholder: String
     
     /// The configuration for the button label used to reveal the text.
-    var buttonLabel: RevealTextFieldLabelConfiguration<ButtonLabel>
-    
+    @ViewBuilder var buttonLabel: (SecureFieldType) -> ButtonLabel
+
     /// A binding to the entered text.
     @Binding var text: String
     
@@ -91,33 +90,37 @@ public struct RevealTextField<ButtonLabel: View>: View {
     
     /// Whether the text field is currently focused.
     @FocusState private var isFocused: Bool
-    
+
+    private var prompt: Text?
+
     /// Initializes a new instance of `RevealTextField`.
     ///
     /// - Parameters:
     ///   - placeholder: A string that describes the purpose of the text field.
     ///   - text: A binding to a string value that represents the contents of the text field.
     ///   - configuration: A configuration for the label of the reveal button.
-    public init(_ placeholder: String, text: Binding<String>, configuration: RevealTextFieldLabelConfiguration<ButtonLabel>) {
+    public init(_ placeholder: String, text: Binding<String>, prompt: Text?, @ViewBuilder buttonLabel: @escaping (SecureFieldType) -> ButtonLabel) {
         self.placeholder = placeholder
         self._text = text
-        self.buttonLabel = configuration
+        self.prompt = prompt
+        self.buttonLabel = buttonLabel
     }
     
     public var body: some View {
         HStack {
-            SecureTextField(placeholder, text: $text, type: type, configuration: buttonLabel)
+            SecureTextField(placeholder, text: $text, prompt: prompt, type: type, buttonLabel: buttonLabel)
                 .focused($isFocused)
             
             Button {
                 type = type == .secure ? .normal : .secure
             } label: {
-                buttonLabel.changeTextFieldTypeButtonLabel(type)
+                buttonLabel(type)
             }
             
         }
         .onChange(of: type) { _ in
             guard isFocused else { return }
+            // why are we setting what has already been set to true?
             DispatchQueue.main.async {
                 self.isFocused = true
             }
@@ -127,10 +130,10 @@ public struct RevealTextField<ButtonLabel: View>: View {
 
 @available(iOS 15.0, *)
 extension RevealTextField where ButtonLabel == Image {
-    public init(_ placeholder: String, text: Binding<String>, configuration: RevealTextFieldLabelConfiguration<Image>? = nil) {
+    public init(_ placeholder: String, text: Binding<String>, buttonLabel: ((SecureFieldType) -> Image)?) {
         self.placeholder = placeholder
         self._text = text
-        self.buttonLabel = configuration ?? .init()
+        self.buttonLabel = buttonLabel ?? RevealTextFieldLabel.systemEye
     }
 }
 
@@ -150,32 +153,14 @@ public enum SecureFieldType {
     case reveal
 }
 
-public struct RevealTextFieldLabelConfiguration<Label: View> {
-    /// A closure that receives the current secure text field type and returns a label to display the button for switching between normal and secure modes.
-    var changeTextFieldTypeButtonLabel: (SecureFieldType) -> (Label)
-    
-    /// Initializes a new instance with the given closure that provides a label to display the button for switching between normal and secure modes.
-    public init(changeTextFieldTypeButtonLabel: @escaping (SecureFieldType) -> (Label)) {
-        self.changeTextFieldTypeButtonLabel = changeTextFieldTypeButtonLabel
+public enum RevealTextFieldLabel {
+    public static func systemEye(secureFieldType type: SecureFieldType) -> Image {
+        Image(systemName: type == .secure ? "eye.slash" : "eye")
     }
-}
 
-extension RevealTextFieldLabelConfiguration where Label == Image {
-    /// Initializes a new instance with the default images for the secure text field button.
-    public init() {
-        self.init(changeTextFieldTypeButtonLabel: { type in
-            Image(systemName: type == .secure ? "eye.slash" : "eye")
-        })
-    }
-    
-    /// Initializes a new instance with the specified images for the secure text field button.
-    ///
-    /// - Parameters:
-    ///   - eye: The image to use for the "unmasked" button.
-    ///   - crossedEye: The image to use for the "masked" button.
-    public init(eye: Image, crossedEye: Image) {
-        self.init(changeTextFieldTypeButtonLabel: { type in
-            type == .secure ? eye : crossedEye
-        })
+    public static func customEye(_ eye: Image, crossed: Image) -> (SecureFieldType) -> Image {
+        { type in
+            type == .secure ? eye : crossed
+        }
     }
 }
