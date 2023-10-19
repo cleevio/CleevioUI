@@ -142,6 +142,34 @@ public struct CleevioInputField<
 
 @available(iOS 15.0, *)
 extension CleevioInputField {
+    /// Creates a `CleevioInputField` with a specific `CleevioTextField` content for convenience.
+    ///
+    /// This initializer simplifies the creation of a `CleevioInputField` with a `CleevioTextField` as its content, providing a type-specific input field with various customization options.
+    /// It is particularly useful for creating input fields that require additional buttons, such as secure text fields with reveal buttons.
+    ///
+    /// - Parameters:
+    ///   - type: The type of the input field (e.g., secure text, plain text).
+    ///   - placeholder: A function builder to define the placeholder text based on the input field state.
+    ///   - text: A binding to the text entered in the input field.
+    ///   - revealTextFieldLabel: A function builder to define the reveal button label based on the input field state.
+    ///   - configuration: The configuration for the `CleevioInputField`.
+    ///
+    /// Example:
+    /// ```swift
+    /// CleevioInputField(
+    ///     type: .secure,
+    ///     placeholder: { state in
+    ///         state.isFocused ? Text("Enter your password") : Text("Password")
+    ///     },
+    ///     text: $password,
+    ///     revealTextFieldLabel: { state in
+    ///         { type in
+    ///             Image(systemName: type == .secure ? "eye.slash" : "eye")
+    ///         }
+    ///     },
+    ///     configuration: configuration
+    /// )
+    /// ```
     init<ButtonLabel: View>(
         type: CleevioTextFieldType,
         placeholder: @escaping (InputFieldState) -> Text?,
@@ -160,6 +188,42 @@ extension CleevioInputField {
 
 @available(iOS 15.0, *)
 public extension CleevioInputField.Configuration where Content: View, Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text {
+    /// Creates a `CleevioInputField.Configuration` with specific color sets and visual properties for convenience.
+    ///
+    /// This initializer simplifies the configuration of a `CleevioInputField` by specifying color sets and visual properties for the input field's appearance. It is particularly useful for quickly defining the appearance of an input field with consistent color and style choices.
+    ///
+    /// - Parameters:
+    ///   - title: A function builder for the title view.
+    ///   - foregroundColorSet: A color set that defines text colors for different input field states.
+    ///   - backgroundColorSet: A color set that defines background colors for different input field states.
+    ///   - strokeColorSet: A color set that defines stroke (border) colors for different input field states.
+    ///   - isFocused: A boolean indicating whether the input field is focused.
+    ///   - contentPadding: Padding for the content of the input field.
+    ///   - font: The font used for the input field.
+    ///   - cornerRadius: The corner radius for the input field.
+    ///
+    /// Example:
+    /// ```swift
+    /// let colorSet = InputFieldStateColorSet(
+    ///     normal: .gray,
+    ///     focused: .blue,
+    ///     error: .red
+    /// )
+    ///
+    /// let configuration = CleevioInputField.Configuration(
+    ///     title: {
+    ///         Text("Username")
+    ///     },
+    ///     foregroundColorSet: colorSet,
+    ///     backgroundColorSet: colorSet,
+    ///     strokeColorSet: colorSet,
+    ///     isFocused: false,
+    ///     contentPadding: .all(8),
+    ///     font: .body
+    ///     cornerRadius: 8
+    /// )
+    /// ```
+    ///
     init(
         title: () -> Title,
         foregroundColorSet: InputFieldStateColorSet,
@@ -190,6 +254,54 @@ public extension CleevioInputField.Configuration where Content: View, Title: Vie
 
 @available(iOS 15.0, *)
 public extension CleevioInputField where Content == CleevioTextField<RevealTextFieldIcon>, Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text {
+    /// Creates a `CleevioInputField` with a `CleevioTextField` content, and specific visual properties for convenience.
+    ///
+    /// This initializer simplifies the creation of a `CleevioInputField` with a `CleevioTextField` containing a reveal button for secure text entry. It allows you to specify visual properties, including the placeholder text color, the reveal button label color, and the overall configuration of the input field.
+    ///
+    /// - Parameters:
+    ///   - type: The type of the input field (e.g., secure text, plain text).
+    ///   - placeholder: The placeholder text for the input field.
+    ///   - text: A binding to the text entered in the input field.
+    ///   - placeholderColorSet: A color set that defines the placeholder text color for different input field states.
+    ///   - revealTextFieldLabelColorSet: A color set that defines the reveal button label color for different input field states.
+    ///   - configuration: The configuration for the `CleevioInputField`.
+    ///
+    /// Example:
+    /// ```swift
+    /// let placeholderColorSet = InputFieldStateColorSet(
+    ///     normal: .gray,
+    ///     focused: .blue,
+    ///     error: .red
+    /// )
+    ///
+    /// let revealLabelColorSet = InputFieldStateColorSet(
+    ///     normal: .gray,
+    ///     focused: .blue,
+    ///     error: .red
+    /// )
+    ///
+    /// let configuration = CleevioInputField.Configuration(
+    ///     title: {
+    ///         Text("Password")
+    ///     },
+    ///     foregroundColorSet: placeholderColorSet,
+    ///     backgroundColorSet: .init(normal: .white, focused: .blue, error: .red),
+    ///     strokeColorSet: .init(normal: .gray, focused: .blue, error: .red),
+    ///     isFocused: false,
+    ///     contentPadding: .all(8),
+    ///     font: .body,
+    ///     cornerRadius: 8
+    /// )
+    ///
+    /// CleevioInputField(
+    ///     type: .secure,
+    ///     placeholder: "Enter your password",
+    ///     text: $password,
+    ///     placeholderColorSet: placeholderColorSet,
+    ///     revealTextFieldLabelColorSet: revealLabelColorSet,
+    ///     configuration: configuration
+    /// )
+    /// ```
     init(
         type: CleevioTextFieldType = .normal,
         placeholder: String?,
