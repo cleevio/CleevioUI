@@ -178,9 +178,42 @@ public extension CleevioTextField<Text, Color, RoundedStroke, Text, ForegroundCo
     ) {
         self.init(
             type: type,
+            title: { Text(title) },
+            placeholder: placeholder,
+            text: text,
+            foregroundColorSet: foregroundColorSet,
+            backgroundColorSet: backgroundColorSet,
+            placeholderColorSet: placeholderColorSet,
+            strokeColorSet: strokeColorSet,
+            revealTextFieldLabelColorSet: revealTextFieldLabelColorSet,
+            cornerRadius: cornerRadius,
+            labelPadding: labelPadding,
+            font: font
+        )
+    }
+}
+
+@available(iOS 15.0, *)
+public extension CleevioTextField where Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text, RevealLabel == ForegroundColorImage {
+    init(
+        type: SecureFieldType = .normal,
+        title: () -> Title,
+        placeholder: String?,
+        text: Binding<String>,
+        foregroundColorSet: TextFieldStateColorSet,
+        backgroundColorSet: TextFieldStateColorSet,
+        placeholderColorSet: TextFieldStateColorSet,
+        strokeColorSet: TextFieldStateColorSet,
+        revealTextFieldLabelColorSet: TextFieldStateColorSet,
+        cornerRadius: CGFloat,
+        labelPadding: EdgeInsets,
+        font: Font
+    ) {
+        self.init(
+            type: type,
             text: text,
             placeholder: { state in
-                var color: Color = placeholderColorSet.resolve(state)
+                let color: Color = placeholderColorSet.resolve(state)
                 return placeholder.map {
                     if #available(iOS 17.0, *) {
                         Text($0).foregroundStyle(color).font(font)
@@ -189,7 +222,7 @@ public extension CleevioTextField<Text, Color, RoundedStroke, Text, ForegroundCo
                     }
                 }
             },
-            title: { Text(title) },
+            title: title,
             foreground: foregroundColorSet.resolve,
             background: backgroundColorSet.resolve,
             overlay: {
