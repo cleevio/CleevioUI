@@ -59,7 +59,7 @@ public struct CleevioInputField<
         /// When @FocusState is not available, this value is used to invoke focus state appearance/behavior
         var isExternallyFocused: Bool = false
         var contentPadding: EdgeInsets
-        var font: Font
+        var font: Font?
 
         public init(
             @ViewBuilder title: () -> Title,
@@ -69,7 +69,7 @@ public struct CleevioInputField<
             @ViewBuilder errorLabel: @escaping (String) -> ErrorLabel,
             isFocused: Bool,
             contentPadding: EdgeInsets,
-            font: Font
+            font: Font?
         ) {
             self.title = title()
             self.foreground = foreground

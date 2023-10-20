@@ -10,7 +10,7 @@ import SwiftUI
 /// A text field that can be used to securely enter sensitive information, with support for revealing the entered text.
 @available(iOS 15.0, *)
 public struct CleevioTextField<ButtonLabel: View>: View {
-
+    
     /// Initializes a new instance of `CleevioTextField`.
     ///
     /// - Parameters:
@@ -25,22 +25,22 @@ public struct CleevioTextField<ButtonLabel: View>: View {
         self.prompt = prompt
         self.buttonLabel = buttonLabel
     }
-
+    
     /// The configuration for the button label used to reveal the text.
     @ViewBuilder var buttonLabel: (CleevioTextFieldType) -> ButtonLabel
-
+    
     /// The placeholder text to display when the text field is empty.
     public var placeholder: String
-
+    
     /// A binding to the entered text.
     @Binding var text: String
-
+    
     /// The type of the text field.
     public var type: CleevioTextFieldType = .normal
-
+    
     /// The prompt text to display when the text field is empty.
     private var prompt: Text?
-
+    
     /// The body of the text field view.
     public var body: some View {
         switch type {
@@ -48,8 +48,8 @@ public struct CleevioTextField<ButtonLabel: View>: View {
             TextField(text: $text, prompt: prompt, label: { Text(placeholder) })
         case .secure:
             SecureField(text: $text, prompt: prompt, label: { Text(placeholder) })
-                // This is a hack that makes the SecureField the same height as TextField.
-                // Be aware that this can be system dependent so update accordingly
+            // This is a hack that makes the SecureField the same height as TextField.
+            // Be aware that this can be system dependent so update accordingly
                 .padding(.vertical, 5/6.0)
         case .reveal:
             RevealTextField(placeholder, text: $text, prompt: prompt, buttonLabel: buttonLabel)
@@ -84,7 +84,7 @@ public struct RevealTextField<ButtonLabel: View>: View {
     
     /// The configuration for the button label used to reveal the text.
     @ViewBuilder var buttonLabel: (CleevioTextFieldType) -> ButtonLabel
-
+    
     /// A binding to the entered text.
     @Binding var text: String
     
@@ -93,9 +93,9 @@ public struct RevealTextField<ButtonLabel: View>: View {
     
     /// Whether the text field is currently focused.
     @FocusState private var isFocused: Bool
-
+    
     private var prompt: Text?
-
+    
     /// Initializes a new instance of `RevealTextField`.
     ///
     /// - Parameters:
@@ -113,7 +113,7 @@ public struct RevealTextField<ButtonLabel: View>: View {
         HStack {
             CleevioTextField(placeholder, text: $text, prompt: prompt, type: type, buttonLabel: buttonLabel)
                 .focused($isFocused)
-
+            
             Button {
                 type = type == .secure ? .normal : .secure
             } label: {
@@ -157,7 +157,7 @@ public struct RevealTextFieldIcon: View {
         var tappableSize: CGSize
         /// The foreground color of the icon.
         var foregroundColor: Color
-
+        
         /// Initializes a Configuration for RevealTextFieldIcon.
         ///
         /// - Parameters:
@@ -174,10 +174,10 @@ public struct RevealTextFieldIcon: View {
             self.foregroundColor = foregroundColor
         }
     }
-
+    
     var icon: Image
     var configuration: Configuration
-
+    
     /// Initializes a RevealTextFieldIcon with the specified icon and configuration.
     ///
     /// - Parameters:
@@ -187,24 +187,22 @@ public struct RevealTextFieldIcon: View {
         self.icon = icon
         self.configuration = configuration
     }
-
+    
     public var sizedIcon: some View {
         icon
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(size: configuration.size, alignment: .center)
             .frame(size: configuration.tappableSize, alignment: .center)
+            .contentShape(Rectangle())
     }
-
+    
     public var body: some View {
-        Group {
-            if #available(iOS 15.0, *) {
-                sizedIcon.foregroundStyle(configuration.foregroundColor)
-            } else {
-                sizedIcon.foregroundColor(configuration.foregroundColor)
-            }
+        if #available(iOS 15.0, *) {
+            sizedIcon.foregroundStyle(configuration.foregroundColor)
+        } else {
+            sizedIcon.foregroundColor(configuration.foregroundColor)
         }
-        .contentShape(Rectangle())
     }
 }
 
@@ -220,7 +218,7 @@ extension RevealTextFieldIcon {
             configuration: configuration
         )
     }
-
+    
     /// Creates a RevealTextFieldIcon with custom eye icons (secure and crossed) based on the specified CleevioTextFieldType.
     ///
     /// - Parameters:
@@ -229,10 +227,10 @@ extension RevealTextFieldIcon {
     ///   - configuration: The configuration for the icon.
     public static func customEye(_ eye: Image, crossed: Image, configuration: Configuration) -> (CleevioTextFieldType) -> Self {
         { type in
-            .init(
-                type == .secure ? crossed : eye,
-                configuration: configuration
-            )
+                .init(
+                    type == .secure ? crossed : eye,
+                    configuration: configuration
+                )
         }
     }
 }
@@ -245,7 +243,7 @@ struct CleevioTextField_Preview: PreviewProvider {
                 .background(Color.red)
                 .padding(10)
                 .background(Color.blue)
-
+            
             CleevioTextField("Hello", text: .constant("Text"), type: .reveal, buttonLabel: { RevealTextFieldIcon.systemEye(CleevioTextFieldType: $0, configuration: .init(foregroundColor: .orange)) })
                 .readSize(onChange: { print($0) })
                 .font(.system(size: 40))
