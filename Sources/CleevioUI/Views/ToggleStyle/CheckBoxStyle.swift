@@ -116,7 +116,7 @@ extension CheckBoxStyle where CheckBox == RoundedStrokeIconCheckBox {
     ///   - cornerRadius: The corner radius of the checkbox.
     ///   - borderWidth: The border width of the checkbox.
     ///   - configuration: The configuration settings for the checkbox.
-    init(
+    public init(
         on: Image = Image(systemName: "checkmark"),
         iconColor: Color = .clear,
         borderColorSet: CheckBoxStateColorSet = .init(.white),
@@ -155,14 +155,22 @@ extension CheckBoxStyle where CheckBox == Image {
 }
 
 /// Represents a checkbox with rounded stroke overlay.
-struct RoundedStrokeIconCheckBox: View {
+public struct RoundedStrokeIconCheckBox: View {
     let icon: Image?
     let iconColor: Color
     let size: CGSize
     let backgroundColor: Color
     let stroke: RoundedStroke
 
-    var body: some View {
+    public init(icon: Image?, iconColor: Color, size: CGSize, backgroundColor: Color, stroke: RoundedStroke) {
+        self.icon = icon
+        self.iconColor = iconColor
+        self.size = size
+        self.backgroundColor = backgroundColor
+        self.stroke = stroke
+    }
+
+    public var body: some View {
         backgroundColor
             .frame(size: size)
             .overlay(ifLet: icon) { $0.foregroundColor(iconColor) }
