@@ -120,7 +120,7 @@ extension CheckBoxStyle where CheckBox == RoundedStrokeIconCheckBox {
         on: Image = Image(systemName: "checkmark"),
         iconColor: Color = .clear,
         borderColorSet: CheckBoxStateColorSet = .init(.white),
-        backgroundColorSet: CheckBoxStateColorSet = .init(.red),
+        backgroundColorSet: CheckBoxStateColorSet = .init(.clear),
         cornerRadius: CGFloat = 4,
         borderWidth: CGFloat = 1,
         configuration: Configuration = .init()
