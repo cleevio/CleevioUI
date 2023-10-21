@@ -25,4 +25,32 @@ public extension View {
             return overlay(overlayContent, alignment: alignment)
         }
     }
+
+    /// Conditionally overlays a view if a value is non-nil.
+    ///
+    /// Use this method to overlay a view conditionally based on a value being non-nil. If the provided value is not nil, the content closure is used to create the overlay view, which is then added to the original view.
+    ///
+    /// - Parameters:
+    ///   - ifLet: The value that is conditionally checked for being non-nil.
+    ///   - alignment: The alignment of the overlay view within the original view. Default is `.center`.
+    ///   - content: A closure that constructs the overlay view using the non-nil value.
+    ///
+    /// - Returns: A view with the conditional overlay.
+    ///
+    /// Example:
+    /// ```swift
+    /// Image(systemName: "star.fill")
+    ///     .overlay(ifLet: icon) { icon in
+    ///         icon
+    ///             .foregroundColor(.yellow)
+    ///     }
+    /// ```
+    @ViewBuilder
+    func overlay<V, IfLet>(ifLet: IfLet?, alignment: Alignment = .center, @ViewBuilder content: (IfLet) -> V) -> some View where V: View {
+        self.overlay(if: true, alignment: alignment) {
+            if let ifLet {
+                content(ifLet)
+            }
+        }
+    }
 }
