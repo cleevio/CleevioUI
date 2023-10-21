@@ -11,28 +11,15 @@ let package = Package(
     products: [
         .library(
             name: "CleevioUI",
-            targets: ["CleevioUI"]),
-        .library(
-            name: "InfoBar",
-            targets: ["InfoBar"]),
+            targets: ["CleevioUI"]
+        )
     ],
-    dependencies: [
-        .package(url: "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioCore.git", .upToNextMajor(from: Version(2, 0, 0))),
-        .package(url: "git@gitlab.cleevio.cz:cleevio-dev-ios/CleevioRouters.git", .upToNextMajor(from: "2.2.0-dev1"))
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "CleevioUI",
-            dependencies: [
-                "CleevioCore"
-            ]),
-        .target(
-            name: "InfoBar",
-            dependencies: [
-                "CleevioCore",
-                "CleevioRouters",
-                "CleevioUI"
-            ]),
+            dependencies: []
+        ),
         .testTarget(
             name: "CleevioUITests",
             dependencies: ["CleevioUI"]),
