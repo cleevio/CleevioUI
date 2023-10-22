@@ -104,7 +104,9 @@ struct SegmentedTabViewPreviews: PreviewProvider {
                     )
                 },
                 content: {
-                    $0.color
+                    ForEach(segments) {
+                        $0.color.tag($0.id)
+                    }
                 }
             )
         }

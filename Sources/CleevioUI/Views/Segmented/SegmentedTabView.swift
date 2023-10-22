@@ -73,8 +73,8 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
     let configuration: Configuration
     /// The view that acts as the tab control.
     let control: Control
-    /// A closure to provide the content for each segment.
-    @ViewBuilder var content: (Segment) -> Content
+    /// Content of the SegmentedTabView
+    let content: Content
 
     /// Creates a `SegmentedTabView` with the specified parameters.
     ///
@@ -89,13 +89,13 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
         selection: Binding<Segment>,
         configuration: Configuration,
         @ViewBuilder control: @escaping () -> Control,
-        @ViewBuilder content: @escaping (Segment) -> Content
+        @ViewBuilder content: () -> Content
     ) {
         self.segments = segments
         self._selection = selection
         self.configuration = configuration
         self.control = control()
-        self.content = content
+        self.content = content()
     }
 
     /// The body of the `SegmentedTabView` view.
@@ -105,13 +105,11 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
             Group {
                 if configuration.isSwipeEnabled {
                     TabView(selection: $selection) {
-                        ForEach(segments) { segment in
-                            content(segment).tag(segment)
-                        }
+                        content
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                 } else {
-                    content(selection)
+                    content
                 }
             }
         }
