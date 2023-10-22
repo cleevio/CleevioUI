@@ -65,8 +65,6 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
         }
     }
 
-    /// An array of segments that represent the tab view's options.
-    let segments: [Segment]
     /// A binding to the currently selected segment.
     @Binding var selection: Segment
     /// The configuration settings for the segmented tab view.
@@ -79,19 +77,16 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
     /// Creates a `SegmentedTabView` with the specified parameters.
     ///
     /// - Parameters:
-    ///   - segments: An array of segments representing the tab view's options.
     ///   - selection: A binding to the currently selected segment.
     ///   - configuration: The configuration settings for the segmented tab view.
     ///   - control: A closure to create the tab control.
     ///   - content: A closure to provide the content for each segment.
     public init(
-        segments: [Segment],
         selection: Binding<Segment>,
         configuration: Configuration,
         @ViewBuilder control: @escaping () -> Control,
         @ViewBuilder content: () -> Content
     ) {
-        self.segments = segments
         self._selection = selection
         self.configuration = configuration
         self.control = control()

@@ -93,7 +93,6 @@ struct SegmentedTabViewPreviews: PreviewProvider {
     static var previews: some View {
         StatePreview(initial: Seg(title: "Option1")) { binding in
             SegmentedTabView(
-                segments: segments,
                 selection: binding,
                 configuration: .init(),
                 control: {
