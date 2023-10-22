@@ -49,8 +49,6 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
         let animation: Animation
         /// Determines whether swipe gestures are enabled to navigate between segments.
         let isSwipeEnabled: Bool
-        /// The padding applied to the content view within the tab view.
-        let contentPadding: EdgeInsets
 
         /// Initializes the configuration with optional parameters.
         ///
@@ -60,12 +58,10 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
         ///   - contentPadding: The padding applied to the content view within the tab view. Default is no padding.
         public init(
             animation: Animation = .default,
-            isSwipeEnabled: Bool = true,
-            contentPadding: EdgeInsets = .init()
+            isSwipeEnabled: Bool = true
         ) {
             self.animation = animation
             self.isSwipeEnabled = isSwipeEnabled
-            self.contentPadding = contentPadding
         }
     }
 
@@ -118,7 +114,6 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
                     content(selection)
                 }
             }
-            .padding(configuration.contentPadding)
         }
         .animation(configuration.animation, value: selection)
     }
