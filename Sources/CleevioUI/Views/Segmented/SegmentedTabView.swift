@@ -40,14 +40,16 @@ import SwiftUI
 ///     }
 /// )
 /// ```
-@available(iOS 14.0, *)
+@available(iOS 14.0, macOS 11.0, *)
 public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View>: View {
 
     /// Configuration options for the `SegmentedTabView`.
     public struct Configuration {
         /// The animation applied when switching between segments.
+        @usableFromInline
         let animation: Animation
         /// Determines whether swipe gestures are enabled to navigate between segments.
+        @usableFromInline
         let isSwipeEnabled: Bool
 
         /// Initializes the configuration with optional parameters.
@@ -56,6 +58,7 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
         ///   - animation: The animation applied when switching between segments. Default is `.default`.
         ///   - isSwipeEnabled: A boolean value indicating whether swipe gestures are enabled. Default is `true`.
         ///   - contentPadding: The padding applied to the content view within the tab view. Default is no padding.
+        @inlinable
         public init(
             animation: Animation = .default,
             isSwipeEnabled: Bool = true
@@ -102,7 +105,9 @@ public struct SegmentedTabView<Segment: Selectable, Content: View, Control: View
                     TabView(selection: $selection) {
                         content
                     }
+                    #if os(iOS)
                     .tabViewStyle(.page(indexDisplayMode: .never))
+                    #endif
                 } else {
                     content
                 }

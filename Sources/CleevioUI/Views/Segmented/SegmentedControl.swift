@@ -22,7 +22,7 @@ import SwiftUI
 ///     }
 /// )
 /// ```
-@available(iOS 14.0, *)
+@available(iOS 14.0, macOS 11.0, *)
 public struct SegmentedControl<Segment: Selectable, ButtonView: View, Indicator: View>: View {
 
     /// Configuration options for the `SegmentedControl`.
@@ -48,10 +48,13 @@ public struct SegmentedControl<Segment: Selectable, ButtonView: View, Indicator:
         }
 
         /// The scrolling behavior of the segmented control.
+        @usableFromInline
         let scroll: Scroll
         /// The transition effect for the indicator.
+        @usableFromInline
         let indicatorTransition: IndicatorTransition
         /// Spacing between individual segments.
+        @usableFromInline
         let spacing: CGFloat
 
         /// Initializes the configuration with optional parameters.
@@ -60,6 +63,7 @@ public struct SegmentedControl<Segment: Selectable, ButtonView: View, Indicator:
         ///   - scroll: The scrolling behavior of the segmented control. Default is `.ifNeeded`.
         ///   - indicatorTransition: The transition effect for the indicator. Default is a sliding animation.
         ///   - spacing: The spacing between segments. Default is 24.
+        @inlinable
         public init(
             scroll: Scroll = .ifNeeded,
             indicatorTransition: IndicatorTransition = .slide(.default),
@@ -112,10 +116,10 @@ public struct SegmentedControl<Segment: Selectable, ButtonView: View, Indicator:
         case .always:
             buttonsScrollView
         case .ifNeeded:
-            if #available(iOS 16.0, *) {
+            if #available(iOS 16.0, macOS 13.0, *) {
                 ViewThatFits(in: .horizontal) {
                     buttonsView
-                        .fixedSize()
+                        .scaledToFit()
                     buttonsScrollView
                 }
             } else {
@@ -123,22 +127,21 @@ public struct SegmentedControl<Segment: Selectable, ButtonView: View, Indicator:
             }
         case let .never(minimumScaleFactor):
             buttonsView
+                .scaledToFit()
                 .minimumScaleFactor(minimumScaleFactor)
         }
     }
 
     /// A scrollable view for the segmented control buttons.
     @ViewBuilder var buttonsScrollView: some View {
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, macOS 13.0, *) {
             ScrollView(.horizontal) {
                 buttonsView
-                    .fixedSize()
             }
             .scrollIndicators(.hidden)
         } else {
             ScrollView(showsIndicators: false) {
                 buttonsView
-                    .fixedSize()
             }
         }
     }
@@ -153,48 +156,49 @@ public struct SegmentedControl<Segment: Selectable, ButtonView: View, Indicator:
                         id: segment.id,
                         in: namespace
                     )
+                    .accessibilityIdentifier(.button("segment.\(index)"))
                     .background(
-                        SwapIndicatorContainer(
-                            segment: segment,
-                            selection: selection,
-                            namespace: namespace,
-                            transition: configuration.indicatorTransition,
-                            indicator: indicator
-                        )
+                        swapIndicator(for: segment)
                     )
             })
         }
-        .scaledToFit()
-        .background(
+        .background(slideIndicator)
+        .animation(.default, value: selection)
+    }
+
+    @ViewBuilder 
+    func swapIndicator(for segment: Segment) -> some View {
+        if case let .swap(anyTransition) = configuration.indicatorTransition, segment.id == selection.id {
+            SwapIndicatorContainer(
+                transition: anyTransition,
+                indicator: indicator
+            )
+        }
+    }
+
+    @ViewBuilder
+    var slideIndicator: some View {
+        if case let .slide(animation) = configuration.indicatorTransition {
             SlideIndicatorContainer(
                 selection: selection,
                 namespace: namespace,
-                transition: configuration.indicatorTransition,
+                animation: animation,
                 indicator: indicator
             )
-        )
-        .animation(.default, value: selection)
+        }
     }
 
     /// `SwapIndicatorContainer` is a view used for rendering the indicator within a `SegmentedControl`. It dynamically displays the indicator based on the selected segment and transition configuration.
     struct SwapIndicatorContainer: View {
-        /// An optional segment to represent the current segment for which the indicator is created.
-        var segment: Segment? = nil
-        /// The segment that is currently selected.
-        let selection: Segment
-        /// The namespace used for coordinating matched geometry effects.
-        let namespace: Namespace.ID
         /// The configuration specifying how the indicator should transition between segments.
-        let transition: Configuration.IndicatorTransition
+        let transition: AnyTransition
         /// The view representing the indicator.
         let indicator: Indicator
 
         /// The body of the `SwapIndicatorContainer` view.
         var body: some View {
-            if case let .swap(anyTransition) = transition, let segment, segment.id == selection.id {
-                indicator
-                    .transition(anyTransition)
-            }
+            indicator
+                .transition(transition)
         }
     }
 
@@ -204,36 +208,41 @@ public struct SegmentedControl<Segment: Selectable, ButtonView: View, Indicator:
         let selection: Segment
         /// The namespace used for coordinating matched geometry effects.
         let namespace: Namespace.ID
-        /// The configuration specifying how the indicator should transition between segments.
-        let transition: Configuration.IndicatorTransition
+        /// The configuration specifying how the indicator should animate between segments.
+        let animation: Animation
         /// The view representing the indicator.
         let indicator: Indicator
 
         /// The body of the `SlideIndicatorContainer` view.
         var body: some View {
-            if case let .slide(animation) = transition {
-                indicator
-                    .matchedGeometryEffect(
-                        id: selection.id,
-                        in: namespace,
-                        isSource: false
-                    )
-                    .animation(animation, value: selection)
-            }
+            indicator
+                .matchedGeometryEffect(
+                    id: selection.id,
+                    in: namespace,
+                    isSource: false
+                )
+                .animation(animation, value: selection)
         }
     }
 }
 
 /// A view for displaying a rounded line indicator.
+@available(macOS 10.15, *)
 public struct RoundedLineIndicator: View {
     /// Configuration settings for the RoundedLineIndicator.
     public struct Configuration {
         /// The color of the indicator.
+        @usableFromInline
         let fill: Color
         /// The corner radius of the indicator.
+        @usableFromInline
         let cornerRadius: CGFloat
         /// The height of the indicator.
+        @usableFromInline
         let height: CGFloat
+        /// The height of the indicator. If nil is provided, the indicator takes the width of the segment
+        @usableFromInline
+        let width: CGFloat?
 
         /// Initializes the configuration with optional parameters.
         ///
@@ -241,22 +250,28 @@ public struct RoundedLineIndicator: View {
         ///   - fill: The color of the indicator. Default is the system's default color.
         ///   - cornerRadius: The corner radius of the indicator. Default is 4.
         ///   - height: The height of the indicator. Default is 4.
+        ///   - width: The height of the indicator. If nil is provided, the indicator takes the width of the segment. Default is nil.
+        @inlinable
         public init(
             fill: Color,
             cornerRadius: CGFloat = 4,
-            height: CGFloat = 4
+            height: CGFloat = 4,
+            width: CGFloat? = nil
         ) {
             self.cornerRadius = cornerRadius
             self.fill = fill
             self.height = height
+            self.width = width
         }
     }
 
+    @usableFromInline
     let configuration: Configuration
 
     /// Initializes a RoundedLineIndicator with the provided configuration.
     ///
     /// - Parameter configuration: The configuration settings for the indicator.
+    @inlinable
     public init(configuration: Configuration) {
         self.configuration = configuration
     }
@@ -267,7 +282,8 @@ public struct RoundedLineIndicator: View {
             Spacer()
             RoundedRectangle(cornerRadius: configuration.cornerRadius)
                 .fill(configuration.fill)
-                .frame(height: configuration.height)
+                .frame(width: configuration.width, height: configuration.height, alignment: .center)
+                .frame(maxWidth: .infinity)
         }
     }
 }
@@ -277,6 +293,7 @@ public struct RoundedLineIndicator: View {
 /// It is specifically designed for the default implementation of `SegmentedControl`.
 ///
 /// If you need to customize a button for `SegmentedControl`, use other available initializers.
+@available(macOS 10.15, *)
 public struct PaddedTitleButton: View {
     /// The title displayed on the button.
     let title: String
@@ -287,6 +304,13 @@ public struct PaddedTitleButton: View {
     /// The action to be executed when the button is tapped.
     let action: () -> Void
 
+    @usableFromInline
+    init(title: String, padding: EdgeInsets, action: @escaping () -> Void) {
+        self.title = title
+        self.padding = padding
+        self.action = action
+    }
+
     /// The body of the `PaddedTitleButton` view, which renders a button with the provided title and padding.
     public var body: some View {
         Button(title, action: action)
@@ -296,7 +320,7 @@ public struct PaddedTitleButton: View {
 
 
 /// An extension of the `SegmentedControl` to provide a convenient initializer with default `ButtonView` and `Indicator`.
-@available(iOS 14.0, *)
+@available(iOS 14.0, macOS 11.0, *)
 extension SegmentedControl where ButtonView == PaddedTitleButton, Indicator == RoundedLineIndicator {
     /// Creates a `SegmentedControl` with custom configurations for the button titles and indicator.
     ///
@@ -308,6 +332,7 @@ extension SegmentedControl where ButtonView == PaddedTitleButton, Indicator == R
     ///   - indicatorConfiguration: The configuration settings for the indicator.
     ///
     /// - Note: It is expected that the user changes foreground color, font, or any other selection-dependent property themselves based on the value of `selection`.
+    @inlinable
     public init(
         segments: [Segment],
         selection: Binding<Segment>,

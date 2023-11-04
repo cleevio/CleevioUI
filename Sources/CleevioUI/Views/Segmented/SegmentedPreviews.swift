@@ -1,15 +1,17 @@
 import SwiftUI
 
+@available(macOS 10.15, *)
 fileprivate struct Seg: Selectable {
     var id: String { title }
     let title: String
     var color: Color = .clear
 }
 
+@available(macOS 10.15, *)
 struct SegmentedControlPreviews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
-            if #available(iOS 14.0, *) {
+            if #available(iOS 14.0, macOS 11.0, *) {
                 StatePreview(initial: Seg(title: "Option1")) { binding in
                     SegmentedControl(
                         segments: [
@@ -44,12 +46,44 @@ struct SegmentedControlPreviews: PreviewProvider {
                             Seg(title: "Option1"),
                             Seg(title: "Option2"),
                             Seg(title: "Option3"),
-                            Seg(title: "Option4"),
+                            Seg(title: "Long Option4"),
                             Seg(title: "Option5"),
                             Seg(title: "Option6"),
                         ],
                         selection: binding,
                         configuration: .init(scroll: .ifNeeded, indicatorTransition: .slide(.bouncy)),
+                        indicatorConfiguration: .init(fill: Color.pink, width: 50)
+                    )
+                }
+
+                StatePreview(initial: Seg(title: "Option1")) { binding in
+                    SegmentedControl(
+                        segments: [
+                            Seg(title: "Option1"),
+                            Seg(title: "Option2"),
+                            Seg(title: "Option3"),
+                            Seg(title: "Lontg Option4"),
+                            Seg(title: "Option5 ksdfspkodfkposdf"),
+                            Seg(title: "Option6"),
+                        ],
+                        selection: binding,
+                        configuration: .init(scroll: .never(minimumScaleFactor: 0.7), indicatorTransition: .slide(.bouncy)),
+                        indicatorConfiguration: .init(fill: Color.pink)
+                    )
+                }
+
+                StatePreview(initial: Seg(title: "Option1")) { binding in
+                    SegmentedControl(
+                        segments: [
+                            Seg(title: "Option1"),
+                            Seg(title: "Option2"),
+                            Seg(title: "Option3"),
+                            Seg(title: "Lontg Option4"),
+                            Seg(title: "Option5 ksdfspkodfkposdf"),
+                            Seg(title: "Option6"),
+                        ],
+                        selection: binding,
+                        configuration: .init(scroll: .never(minimumScaleFactor: 1.0), indicatorTransition: .slide(.bouncy)),
                         indicatorConfiguration: .init(fill: Color.pink)
                     )
                 }
@@ -82,7 +116,7 @@ struct SegmentedControlPreviews: PreviewProvider {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 14.0, macOS 11.0, *)
 struct SegmentedTabViewPreviews: PreviewProvider {
     fileprivate static let segments = [
         Seg(title: "Option3", color: .red),
@@ -104,7 +138,7 @@ struct SegmentedTabViewPreviews: PreviewProvider {
                 },
                 content: {
                     ForEach(segments) {
-                        $0.color.tag($0.id)
+                        $0.color.tag($0)
                     }
                 }
             )

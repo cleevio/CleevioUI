@@ -1,6 +1,7 @@
 import Foundation
 
 /// `Selectable` is a protocol that represents an item that can be selected.
+@available(macOS 10.15, *)
 public protocol Selectable: Identifiable, Hashable, CustomStringConvertible {
 
     /// A human-readable title for the selectable item.
@@ -8,6 +9,7 @@ public protocol Selectable: Identifiable, Hashable, CustomStringConvertible {
 }
 
 // Default implementations for Selectable protocol
+@available(macOS 10.15, *)
 public extension Selectable {
 
     /// The default implementation for the `id` property required by the `Identifiable` protocol.
