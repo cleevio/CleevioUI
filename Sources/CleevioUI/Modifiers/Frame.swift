@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(macOS 10.15, *)
 extension View {
     @inlinable
     public func frame(size: CGSize, alignment: Alignment = .center) -> some View {

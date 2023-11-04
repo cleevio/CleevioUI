@@ -5,6 +5,7 @@
 //  Created by Daniel Fernandez on 2/17/21.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 public struct PullUpFlexibleScrollableView<Content: View>: View {
@@ -142,3 +143,4 @@ public struct PullUpFlexibleScrollableView<Content: View>: View {
             UIProperties.rectangleHeight
     }
 }
+#endif

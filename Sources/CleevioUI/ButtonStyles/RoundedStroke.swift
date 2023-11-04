@@ -1,10 +1,12 @@
 import SwiftUI
 
+@available(macOS 10.15, *)
 public struct RoundedStroke: View {
-    var color: Color
-    var cornerRadius: CGFloat
-    var lineWidth: CGFloat
+    public var color: Color
+    public var cornerRadius: CGFloat
+    public var lineWidth: CGFloat
     
+    @inlinable
     public init(
         color: Color,
         cornerRadius: CGFloat,

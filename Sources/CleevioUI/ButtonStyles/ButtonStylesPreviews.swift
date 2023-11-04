@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(macOS 10.15, *)
 extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke, LoadingView> {
     /// Initializer color sets. It is expected that projects implement their own convenience initializer based on the colors of designer
     static func solid(
@@ -74,7 +75,7 @@ extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke, Loadi
 }
 
 
-@available(iOS 14.0, *)
+@available(iOS 14.0, macOS 11.0, *)
 struct SolidButton_Previews: PreviewProvider {
     // swiftlint:disable closure_body_length
     enum SolidPreviewStyle {

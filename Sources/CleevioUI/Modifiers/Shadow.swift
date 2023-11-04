@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(macOS 10.15, *)
 extension View {
     @inlinable
     public func withShadow(opacity: Double = 0.1, radius: CGFloat = 24, x: CGFloat = 0, y: CGFloat = 7) -> some View {

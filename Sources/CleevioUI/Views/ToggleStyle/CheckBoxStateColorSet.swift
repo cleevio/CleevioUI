@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Defines a set of colors for checkbox states.
+@available(macOS 10.15, *)
 public struct CheckBoxStateColorSet {
     /// Color for the "on" state.
     public let on: Color

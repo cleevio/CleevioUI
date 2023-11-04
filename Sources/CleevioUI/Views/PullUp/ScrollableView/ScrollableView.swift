@@ -5,6 +5,7 @@
 //  Created by Daniel Fernandez on 2/15/21.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import UIKit
 
@@ -182,3 +183,4 @@ struct ScrollableView<Content: View>: UIViewRepresentable {
         }
     }
 }
+#endif

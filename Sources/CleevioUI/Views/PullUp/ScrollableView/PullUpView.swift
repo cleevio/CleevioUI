@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
 public struct PullUpView<Content: View>: View {
     private let content: Content
     @State private var currentPosition: PullUpViewPosition
@@ -111,3 +112,4 @@ public struct PullUpView<Content: View>: View {
         return progress <= 0 ? 0 : Double(progress) * 0.5
     }
 }
+#endif

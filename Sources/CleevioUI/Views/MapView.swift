@@ -5,6 +5,7 @@
 //  Created by Daniel Fernandez on 2/13/21.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import MapKit
 
@@ -31,3 +32,4 @@ public struct MapView: UIViewRepresentable {
         }
     }
 }
+#endif

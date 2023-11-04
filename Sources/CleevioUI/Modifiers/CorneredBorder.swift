@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(macOS 10.15, *)
 public struct CorneredBorderModifier: ViewModifier {
     private let borderWidth: CGFloat
     private let cornerRadius: CGFloat
@@ -31,6 +32,7 @@ public struct CorneredBorderModifier: ViewModifier {
     }
 }
 
+@available(macOS 10.15, *)
 extension View {
     public func makeCorneredBorder(
         color: Color,

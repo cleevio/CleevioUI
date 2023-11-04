@@ -5,6 +5,7 @@
 //  Created by Diego on 18/01/22.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 @available(*, deprecated, message: "Rewrite first, instead of items, it should take simply content, rewrite without using geometryreader")
@@ -82,3 +83,4 @@ public struct CLSegmentedPicker<Item: Identifiable, Content: View>: View {
         CGFloat(items.firstIndex(where: { $0.id == selection.id })!) * (segmentSize.width + segmentXPadding / 2)
     }
 }
+#endif

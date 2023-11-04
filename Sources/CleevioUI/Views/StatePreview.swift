@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// A view that previews a stateful UI component.
+@available(macOS 10.15, *)
 public struct StatePreview<Value, Content: View>: View {
     @State var value: Value
     @ViewBuilder var content: (Binding<Value>) -> Content

@@ -8,6 +8,7 @@
 import SwiftUI
 
 /// A button that performs an asynchronous action when tapped that guards that the action is run maximally once at the same time.
+@available(macOS 10.15, *)
 public struct AsyncButton<Label: View>: View {
     /// The asynchronous action to perform when the button is tapped.
     public var action: () async -> Void
@@ -45,6 +46,7 @@ public struct AsyncButton<Label: View>: View {
     }
 }
 
+@available(macOS 10.15, *)
 extension AsyncButton where Label == Text {
     /// Creates an asynchronous button with the given title and action.
     /// - Parameters:
@@ -56,7 +58,7 @@ extension AsyncButton where Label == Text {
     }
 }
 
-@available(iOS 14.0, *)
+@available(iOS 14.0, macOS 11.0, *)
 struct AsyncButton_Previews: PreviewProvider {
     static var previews: some View {
         AsyncButton(action: {

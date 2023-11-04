@@ -7,8 +7,9 @@
 
 import SwiftUI
 
+@available(macOS 10.15, *)
 extension View {
-    
+    @inlinable
     public func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
         background(
             GeometryReader { metrics in
@@ -20,8 +21,8 @@ extension View {
     }
 }
 
-private struct SizePreferenceKey: PreferenceKey {
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+public struct SizePreferenceKey: PreferenceKey {
+    public static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
 
-    static var defaultValue: CGSize = .zero
+    public static var defaultValue: CGSize = .zero
 }

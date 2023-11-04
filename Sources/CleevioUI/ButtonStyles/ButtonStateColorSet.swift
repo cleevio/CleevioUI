@@ -8,6 +8,7 @@
 import SwiftUI
 
 /// A set of colors representing different states of a button.
+@available(macOS 10.15, *)
 public struct ButtonStateColorSet {
     /// The color for the normal (enabled and not pressed) state of the button.
     public let normal: Color

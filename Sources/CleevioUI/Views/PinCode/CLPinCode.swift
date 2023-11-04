@@ -5,6 +5,7 @@
 //  Created by Daniel Fernandez on 2/11/21.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import Combine
 
@@ -65,3 +66,4 @@ public struct CLPinCode: View {
         }
     }
 }
+#endif

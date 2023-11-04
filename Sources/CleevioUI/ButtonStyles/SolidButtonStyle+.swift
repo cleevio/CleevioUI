@@ -1,6 +1,8 @@
 import SwiftUI
 
+@available(macOS 10.15, *)
 public extension SolidButtonStyle where Background == Color, Overlay == RoundedStroke, LoadingView == CleevioUI.LoadingView {
+    @inlinable
     init(
         foregroundColorSet: ButtonStateColorSet,
         backgroundColorSet: ButtonStateColorSet,

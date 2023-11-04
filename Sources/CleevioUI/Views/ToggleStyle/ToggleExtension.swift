@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(macOS 10.15, *)
 extension Toggle where Label == EmptyView {
 
     /// Initializes a Toggle with a custom binding to a Boolean value and an empty label.
@@ -20,6 +21,6 @@ extension Toggle where Label == EmptyView {
     ///
     /// - Returns: A Toggle with an empty label and a binding to a Boolean value.
     public init(isOn: Binding<Bool>) {
-        self.init(isOn: isOn, label: { EmptyView() })
+        self.init(isOn: isOn, label: EmptyView.init)
     }
 }

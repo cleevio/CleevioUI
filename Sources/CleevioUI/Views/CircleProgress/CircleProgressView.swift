@@ -7,6 +7,7 @@
 import SwiftUI
 import Combine
 
+@available(macOS 10.15, *)
 public struct CircleProgressView<Strategy: CircularProgressBarStategy>: View {
     @ObservedObject public var strategy: Strategy
     @ObservedObject public var appereance: CircleProgressAppearance

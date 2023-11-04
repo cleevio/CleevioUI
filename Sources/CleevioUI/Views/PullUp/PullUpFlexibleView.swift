@@ -5,6 +5,7 @@
 //  Created by Thành Đỗ Long on 07.07.2022.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 @available(*, deprecated, message: "Quite laggy solution, consider using FloatingPanelRouter that has very similar functionality with much better performance")
@@ -201,3 +202,4 @@ struct PullUpFlexibleView_Previews: PreviewProvider {
         }
     }
 }
+#endif

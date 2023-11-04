@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// A custom button style that allows you to define the appearance of a button with various states and loading view.
+@available(macOS 10.15, *)
 public struct SolidButtonStyle<
     Background: View,
     Overlay: View,
@@ -13,6 +14,7 @@ public struct SolidButtonStyle<
     ///   - isPressed: A boolean indicating whether the button is currently pressed.
     ///
     /// - Returns: The color to use for the button's text.
+    @usableFromInline
     @ViewBuilder var foreground: (Bool, Bool) -> Color
     ///  Defines the background view for different button states.
     ///
@@ -21,6 +23,7 @@ public struct SolidButtonStyle<
     ///   - isPressed: A boolean indicating whether the button is currently pressed.
     ///
     /// - Returns: The background view for the button.
+    @usableFromInline
     @ViewBuilder var background: (Bool, Bool) -> Background
     /// Defines the overlay view for different button states.
     ///
@@ -29,18 +32,25 @@ public struct SolidButtonStyle<
     ///   - isPressed: A boolean indicating whether the button is currently pressed.
     ///
     /// - Returns: The overlay view for the button.
+    @usableFromInline
     @ViewBuilder var overlay: (Bool, Bool) -> Overlay
     // The view used as a loading indicator.
+    @usableFromInline
     let loadingView: LoadingView
     /// The corner radius of the button.
+    @usableFromInline
     let cornerRadius: CGFloat
     /// Padding for the button's label.
+    @usableFromInline
     let labelPadding: EdgeInsets
     /// Optional width for the button.
+    @usableFromInline
     let width: CGFloat?
     /// Optional font for the button's label.
+    @usableFromInline
     let font: Font?
 
+    @inlinable
     public init(
         @ViewBuilder foreground: @escaping (Bool, Bool) -> Color,
         @ViewBuilder background: @escaping (Bool, Bool) -> Background,

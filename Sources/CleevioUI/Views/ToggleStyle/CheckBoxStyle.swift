@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// A custom toggle style that renders a checkbox.
+@available(macOS 10.15, *)
 public struct CheckBoxStyle<CheckBox: View>: ToggleStyle {
 
     /// Configuration settings for the checkbox.
@@ -10,15 +11,24 @@ public struct CheckBoxStyle<CheckBox: View>: ToggleStyle {
         public enum Layout {
             case horizontal(alignment: VerticalAlignment = .center)
             case vertical(alignment: HorizontalAlignment = .center)
+
+            @inlinable
+            public static var horizontal: Self { horizontal() }
+            @inlinable
+            public static var vertical: Self { vertical() }
         }
 
         /// Spacing between the checkbox and label.
+        @usableFromInline
         let spacing: CGFloat
         /// Size of the checkbox.
+        @usableFromInline
         let size: CGSize
         /// Layout style for the checkbox.
+        @usableFromInline
         let layout: Layout
         /// Animation for the checkbox state change.
+        @usableFromInline
         let animation: Animation?
 
         /// Initializes a configuration object with optional parameters.
@@ -28,10 +38,11 @@ public struct CheckBoxStyle<CheckBox: View>: ToggleStyle {
         ///   - size: The size of the checkbox. Default is CGSize(width: 24, height: 24).
         ///   - layout: The layout style for the checkbox. Default is horizontal with center alignment.
         ///   - animation: The animation for checkbox state changes. Default is .default.
+        @inlinable
         public init(
             spacing: CGFloat = 16,
             size: CGSize = .init(width: 24, height: 24),
-            layout: Layout = .horizontal(),
+            layout: Layout = .horizontal,
             animation: Animation? = .default
         ) {
             self.spacing = spacing
@@ -43,7 +54,7 @@ public struct CheckBoxStyle<CheckBox: View>: ToggleStyle {
         /// Provides an abstract layout for conditional layout handling.
         ///
         /// - Returns: An abstract layout for the checkbox.
-        @available(iOS 16.0, *)
+        @available(iOS 16.0, macOS 13.0, *)
         var anyLayout: AnyLayout {
             switch layout {
             case let .horizontal(alignment):
@@ -71,7 +82,7 @@ public struct CheckBoxStyle<CheckBox: View>: ToggleStyle {
 
     /// Creates the body of the checkbox.
     public func makeBody(configuration: ToggleStyle.Configuration) -> some View {
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, macOS 13.0, *) {
             viewConfiguration.anyLayout {
                 InnerView(checkBox: view(configuration.isOn), viewConfiguration: viewConfiguration, configuration: configuration)
             }
@@ -105,6 +116,7 @@ public struct CheckBoxStyle<CheckBox: View>: ToggleStyle {
 }
 
 // Extension for CheckBoxStyle where the checkbox is RoundedStrokeIconCheckBox.
+@available(macOS 11.0, *)
 extension CheckBoxStyle where CheckBox == RoundedStrokeIconCheckBox {
     /// Initializes a CheckBoxStyle for RoundedStrokeIconCheckBox-based checkboxes.
     ///
@@ -142,6 +154,7 @@ extension CheckBoxStyle where CheckBox == RoundedStrokeIconCheckBox {
 }
 
 // Extension for CheckBoxStyle where the checkbox is an Image.
+@available(macOS 10.15, *)
 extension CheckBoxStyle where CheckBox == Image {
     /// Initializes a CheckBoxStyle for Image-based checkboxes.
     ///
@@ -149,12 +162,14 @@ extension CheckBoxStyle where CheckBox == Image {
     ///   - on: Image to display for the "on" state.
     ///   - off: Image to display for the "off" state.
     ///   - configuration: The configuration settings for the checkbox.
+    @inlinable
     public init(on: Image, off: Image, configuration: Configuration = .init()) {
         self.init(viewConfiguration: configuration) { $0 ? on : off }
     }
 }
 
 /// Represents a checkbox with rounded stroke overlay.
+@available(macOS 10.15, *)
 public struct RoundedStrokeIconCheckBox: View {
     let icon: Image?
     let iconColor: Color
@@ -175,12 +190,13 @@ public struct RoundedStrokeIconCheckBox: View {
             .frame(size: size)
             .overlay(ifLet: icon) { $0.foregroundColor(iconColor) }
             .transition(.identity)
-            .overlay(if: true) { stroke }
+            .overlay(stroke)
             .cornerRadius(stroke.cornerRadius)
     }
 }
 
 /// Preview provider for CheckBoxStyle.
+@available(macOS 11.0, *)
 struct CheckBoxStyle_Preview: PreviewProvider {
     static var previews: some View {
         VStack {
@@ -197,7 +213,7 @@ struct CheckBoxStyle_Preview: PreviewProvider {
                     .toggleStyle(
                         CheckBoxStyle(
                             iconColor: .white,
-                            configuration: .init(layout: .vertical())
+                            configuration: .init(layout: .vertical)
                         )
                     )
             }

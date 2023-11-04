@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(macOS 10.15, *)
 extension Shape {
     @inlinable
     public func style<StrokeContent: ShapeStyle, FillContent: ShapeStyle>(

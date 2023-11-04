@@ -5,6 +5,7 @@
 //  Created by Daniel Fernandez on 2/17/21.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import UIKit
 
@@ -187,3 +188,4 @@ struct FlexibleScrollableView<Content: View>: UIViewRepresentable {
         }
     }
 }
+#endif

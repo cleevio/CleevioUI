@@ -5,9 +5,6 @@
 //  Created by Thành Đỗ Long on 30.11.2020.
 //
 
-#if canImport(UIKit)
-import UIKit
-
 public enum TextFieldType {
     case `default`
     case countryPicker
@@ -19,7 +16,12 @@ public enum TextFieldType {
     case familyName
     case disabled
     case numberPad
+}
 
+#if canImport(UIKit)
+import UIKit
+
+extension TextFieldType {
     var keyboardType: UIKeyboardType {
         switch self {
         case .emailAddress:

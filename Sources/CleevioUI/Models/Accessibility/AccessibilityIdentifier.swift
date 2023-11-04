@@ -60,21 +60,26 @@ public enum AccessibilityIdentifier: CustomStringConvertible {
     }
 }
 
+@available(macOS 10.15, *)
 public extension View {
     /// SwiftUI view identifier that adds only accessibilityIdentifier which doesn't influence the View any other way
-    @available(iOS 14.0, *)
+    @available(iOS 14.0, macOS 11.0, *)
     func accessibilityIdentifier(_ identifier: AccessibilityIdentifier) -> some View {
         accessibilityIdentifier(identifier.description)
     }
 }
 
+#if canImport(UIKit)
 public extension UIView {
+    @inlinable
     func withAccessibilityIdentifier(_ identifier: AccessibilityIdentifier) -> Self {
         setAccessibilityIdentifier(identifier)
         return self
     }
 
+    @inlinable
     func setAccessibilityIdentifier(_ identifier: AccessibilityIdentifier) {
         self.accessibilityIdentifier = identifier.description
     }
 }
+#endif

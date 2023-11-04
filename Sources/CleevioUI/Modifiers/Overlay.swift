@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(macOS 10.15, *)
 public extension View {
     /// Adds an overlay to the view if a specified condition is met.
     ///
@@ -19,7 +20,7 @@ public extension View {
             }
         }
     
-        if #available(iOS 15.0, *) {
+        if #available(iOS 15.0, macOS 12.0, *) {
             return overlay(alignment: alignment, content: { overlayContent })
         } else {
             return overlay(overlayContent, alignment: alignment)
@@ -45,6 +46,7 @@ public extension View {
     ///             .foregroundColor(.yellow)
     ///     }
     /// ```
+    @available(macOS 10.15, *)
     @ViewBuilder
     func overlay<V, IfLet>(ifLet: IfLet?, alignment: Alignment = .center, @ViewBuilder content: (IfLet) -> V) -> some View where V: View {
         self.overlay(if: true, alignment: alignment) {

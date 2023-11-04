@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(macOS 10.15, *)
 struct Shake: GeometryEffect {
     var movement: CGFloat = 15
     var shakes = 3

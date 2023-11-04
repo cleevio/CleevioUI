@@ -5,6 +5,7 @@
 //  Created by Diego on 25/01/22.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 // TODO: consider better support of custom set styles (and with that, remove isLoading entirely, isDisabled should be driven only through Environment(\.isEnabled)
@@ -137,3 +138,4 @@ struct CLStepperViewPreview: PreviewProvider {
         .frame(size: CGSize(width: 150, height: 50))
     }
 }
+#endif

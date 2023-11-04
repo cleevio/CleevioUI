@@ -5,6 +5,7 @@
 //  Created by Daniel Fernandez on 2/17/21.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 public enum PositionType {
@@ -143,3 +144,4 @@ public struct PullUpFlexiblePosition {
         return belowPosition
     }
 }
+#endif

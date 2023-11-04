@@ -6,6 +6,7 @@
 
 import SwiftUI
 
+@available(macOS 10.15, *)
 open class CircleProgressAppearance: ObservableObject {
     @Published public var padding: (edges: Edge.Set, length: CGFloat) = (edges: .all, length: 16)
     

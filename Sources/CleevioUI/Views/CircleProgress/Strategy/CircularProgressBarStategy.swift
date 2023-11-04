@@ -7,6 +7,7 @@
 import Combine
 import CoreGraphics
 
+@available(macOS 10.15, *)
 open class CircularProgressBarStategy: ObservableObject {
     open var progressStart: CGFloat { 0.0 }
     open var progressEnd: CGFloat { 1.0 }

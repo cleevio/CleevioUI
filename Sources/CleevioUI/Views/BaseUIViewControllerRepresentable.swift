@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
 public struct BaseUIViewControllerRepresentable: UIViewControllerRepresentable {
     public let viewController: UIViewController
 
@@ -21,3 +22,4 @@ public struct BaseUIViewControllerRepresentable: UIViewControllerRepresentable {
     public func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
     }
 }
+#endif

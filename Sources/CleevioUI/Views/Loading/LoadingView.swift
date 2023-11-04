@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 // TODO: Provide isAnimating through binding?
+@available(macOS 10.15, *)
 public struct LoadingView: View {
     var scale: CGFloat
     var spacing: CGFloat

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
 public struct UITextFieldRepresentable: UIViewRepresentable {
     public typealias UITextFieldContextAction = (UITextField, Context) -> Void
 
@@ -69,3 +70,4 @@ open class BaseUITextFieldDelegate: NSObject, UITextFieldDelegate {
         }
     }
 }
+#endif

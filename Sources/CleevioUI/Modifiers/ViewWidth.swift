@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+@available(macOS 10.15, *)
 public extension View {
     @inlinable
     func fullWidth(_ isTrue: Bool) -> some View {
