@@ -41,7 +41,7 @@ import SwiftUI
 /// }, configuration: configuration)
 /// ```
 ///
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 public struct CleevioInputField<
     Content: View,
     Title: View,
@@ -50,7 +50,7 @@ public struct CleevioInputField<
     ErrorLabel: View
 >: View {
     public struct Configuration {
-        var title: Title
+        @ViewBuilder var title: (InputFieldState) -> Title
         @ViewBuilder var foreground: (InputFieldState) -> Color
         @ViewBuilder var background: (InputFieldState) -> Background
         @ViewBuilder var overlay: (InputFieldState) -> Overlay
@@ -62,7 +62,7 @@ public struct CleevioInputField<
         var font: Font?
 
         public init(
-            @ViewBuilder title: () -> Title,
+            @ViewBuilder title: @escaping (InputFieldState) -> Title,
             @ViewBuilder foreground: @escaping (InputFieldState) -> Color,
             @ViewBuilder background: @escaping (InputFieldState) -> Background,
             @ViewBuilder overlay: @escaping (InputFieldState) -> Overlay,
@@ -71,7 +71,7 @@ public struct CleevioInputField<
             contentPadding: EdgeInsets,
             font: Font?
         ) {
-            self.title = title()
+            self.title = title
             self.foreground = foreground
             self.background = background
             self.overlay = overlay
@@ -82,13 +82,16 @@ public struct CleevioInputField<
         }
     }
 
+    @usableFromInline
     @ViewBuilder var content: (InputFieldState) -> Content
-    var configuration: Configuration
+    
+    public var configuration: Configuration
 
     @FocusState private var isFocused: Bool
     @Environment(\.stringError) private var error: String?
     @Environment(\.isEnabled) private var isEnabled
 
+    @inlinable
     public init(
         @ViewBuilder content: @escaping (InputFieldState) -> Content,
         configuration: Configuration
@@ -107,7 +110,7 @@ public struct CleevioInputField<
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            configuration.title
+            configuration.title(state)
 
             content(state)
                 .focused($isFocused)
@@ -140,7 +143,7 @@ public struct CleevioInputField<
 
 // MARK: - Helpers
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 public extension CleevioInputField.Configuration where Content: View, Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text {
     /// Creates a `CleevioInputField.Configuration` with specific color sets and visual properties for convenience.
     ///
@@ -179,7 +182,7 @@ public extension CleevioInputField.Configuration where Content: View, Title: Vie
     /// ```
     ///
     init(
-        title: () -> Title,
+        title: @escaping (InputFieldState) -> Title,
         foregroundColorSet: InputFieldStateColorSet,
         backgroundColorSet: InputFieldStateColorSet,
         strokeColorSet: InputFieldStateColorSet,
@@ -206,7 +209,7 @@ public extension CleevioInputField.Configuration where Content: View, Title: Vie
     }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 public extension CleevioInputField {
     /// Creates a `CleevioInputField` with a specific `CleevioTextField` content for convenience.
     ///
@@ -252,7 +255,7 @@ public extension CleevioInputField {
     }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 public extension CleevioInputField where Content == CleevioTextField<RevealTextFieldIcon>, Title: View, Background == Color, Overlay == RoundedStroke, ErrorLabel == Text {
     /// Creates a `CleevioInputField` with a `CleevioTextField` content, and specific visual properties for convenience.
     ///
@@ -315,7 +318,7 @@ public extension CleevioInputField where Content == CleevioTextField<RevealTextF
             placeholder: { state in
                 let color: Color = placeholderColorSet.resolve(state)
                 return placeholder.map {
-                    if #available(iOS 17.0, *) {
+                    if #available(iOS 17.0, macOS 14.0, *) {
                         Text($0).foregroundStyle(color).font(configuration.font)
                     } else {
                         Text($0).foregroundColor(color).font(configuration.font)

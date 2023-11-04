@@ -6,6 +6,7 @@ public struct InputFieldState {
     public var isError: Bool
 }
 
+@available(macOS 10.15, *)
 public struct InputFieldStateColorSet {
     public var unfocused: Color
     public var focused: Color
@@ -51,6 +52,7 @@ public struct TextFieldState {
     }
 }
 
+@available(macOS 10.15, *)
 public struct TextFieldStateColorSet {
     var colorSet: InputFieldStateColorSet
 

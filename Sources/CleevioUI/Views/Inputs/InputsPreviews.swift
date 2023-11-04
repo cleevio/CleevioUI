@@ -1,6 +1,6 @@
 import SwiftUI
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 fileprivate extension CleevioInputField<CleevioTextField<RevealTextFieldIcon>, Text, Color, RoundedStroke, Text> {
     init(
         type: CleevioTextFieldType = .normal,
@@ -25,7 +25,7 @@ fileprivate extension CleevioInputField<CleevioTextField<RevealTextFieldIcon>, T
                 disabled: .gray
             ),
             configuration: .init(
-                title: { Text(title) },
+                title: { _ in Text(title) },
                 foregroundColorSet: .init(
                     unfocused: .gray,
                     focused: .white,
@@ -52,7 +52,7 @@ fileprivate extension CleevioInputField<CleevioTextField<RevealTextFieldIcon>, T
     }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 struct CleevioInputField_Preview: PreviewProvider {
     static var previews: some View {
         ScrollView {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// A text field that can be used to securely enter sensitive information, with support for revealing the entered text.
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 public struct CleevioTextField<ButtonLabel: View>: View {
     
     /// Initializes a new instance of `CleevioTextField`.
@@ -57,7 +57,7 @@ public struct CleevioTextField<ButtonLabel: View>: View {
     }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension CleevioTextField where ButtonLabel == Image {
     
     /// Initializes a new instance of `CleevioTextField` with the button label configured to use the specified images.
@@ -76,7 +76,7 @@ extension CleevioTextField where ButtonLabel == Image {
 }
 
 /// A text field that can be used to securely enter sensitive information, with a button that reveals the entered text.
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 public struct RevealTextField<ButtonLabel: View>: View {
     
     /// The placeholder text to display when the text field is empty.
@@ -148,6 +148,7 @@ public enum CleevioTextFieldType {
 }
 
 /// A view representing an icon used to toggle between a secure text field and a revealed text field.
+@available(macOS 12.0, *)
 public struct RevealTextFieldIcon: View {
     /// Configuration for the RevealTextFieldIcon.
     public struct Configuration {
@@ -198,7 +199,7 @@ public struct RevealTextFieldIcon: View {
     }
     
     public var body: some View {
-        if #available(iOS 15.0, *) {
+        if #available(iOS 15.0, macOS 12.0, *) {
             sizedIcon.foregroundStyle(configuration.foregroundColor)
         } else {
             sizedIcon.foregroundColor(configuration.foregroundColor)
@@ -206,6 +207,7 @@ public struct RevealTextFieldIcon: View {
     }
 }
 
+@available(macOS 12.0, *)
 extension RevealTextFieldIcon {
     /// Creates a RevealTextFieldIcon with a system eye icon (secure or revealed) based on the specified CleevioTextFieldType.
     ///
@@ -235,7 +237,7 @@ extension RevealTextFieldIcon {
     }
 }
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 struct CleevioTextField_Preview: PreviewProvider {
     static var previews: some View {
         VStack {
