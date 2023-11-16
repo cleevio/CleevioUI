@@ -7,9 +7,13 @@
 
 import SwiftUI
 
-/// A button that performs an asynchronous action when tapped that guards that the action is run maximally once at the same time.
+/// A button that performs an asynchronous action when tapped while guarding that the action is run maximally once at the same time.
 @available(macOS 10.15, *)
-public struct AsyncButton<Label: View>: View {
+public struct AsyncButton<Label: View, Identifier: Equatable>: View {
+
+    /// The identifier of the button.
+    public var id: Identifier
+
     /// The asynchronous action to perform when the button is tapped.
     public var action: () async -> Void
     
@@ -17,7 +21,90 @@ public struct AsyncButton<Label: View>: View {
     public var label: Label
     
     /// Internal state to track whether the action is currently executing a task.
-    @State private var isExecuting = false
+    @Binding public var isExecuting: Identifier?
+
+    /// Internal state to track whether the action is currently executing.
+    @State private var isExecutingInternal = false
+
+    /// Creates an asynchronous button with the given action and label.
+    /// - Parameters:
+    ///   - executingID: The unique identifier of the button that is used for setting isExecuting binding.
+    ///   - isExecuting: A Binding that stores and sets the currently executing identifier.
+    ///   - action: The asynchronous action to perform when the button is tapped.
+    ///   - label: A closure returning the label of the button.
+    public init(executingID: Identifier,
+                isExecuting: Binding<Identifier?>,
+                action: @escaping () async -> Void,
+                label: () -> Label) {
+        self.action = action
+        self.id = executingID
+        self.label = label()
+        self._isExecuting = isExecuting
+    }
+    
+    /// The body of the asynchronous button.
+    public var body: some View {
+        let isButtonExecuting = isExecutingInternal || isExecuting == id
+
+        return Button(action: {
+            guard isExecuting == nil else { return }
+
+            Task { @MainActor in
+                isExecuting = id
+                isExecutingInternal = true
+
+                await action()
+
+                isExecuting = nil
+                isExecutingInternal = false
+            }
+        }, label: { label })
+        .isLoading(isButtonExecuting)
+        .disabled(!isButtonExecuting && isExecuting != nil)
+    }
+}
+
+/// An extension for AsyncButton with a default label of type Text.
+@available(macOS 10.15, *)
+extension AsyncButton where Label == Text {
+    
+    /// Creates an asynchronous button with the given title and action.
+    /// - Parameters:
+    ///   - title: The title of the button.
+    ///   - executingID: The unique identifier of the button that is used for setting isExecuting binding.
+    ///   - isExecuting: A Binding that stores and sets the currently executing identifier.
+    ///   - action: The asynchronous action to perform when the button is tapped.
+    @inlinable
+    public init(_ title: some StringProtocol,
+                executingID: Identifier,
+                isExecuting: Binding<Identifier?>,
+                action: @escaping () async -> Void) {
+        self.init(executingID: executingID, isExecuting: isExecuting, action: action) { Text(title) }
+    }
+}
+
+/// An extension for AsyncButton with an empty identifier.
+@available(macOS 10.15, *)
+extension AsyncButton where Identifier == EmptyIdentifier {
+    
+    /// Creates an asynchronous button with the given action, label, and binding for execution state.
+    /// - Parameters:
+    ///   - isExecuting: A Binding that stores and sets the execution state.
+    ///   - action: The asynchronous action to perform when the button is tapped.
+    ///   - label: A closure returning the label of the button.
+    @inlinable
+    public init(isExecuting: Binding<Bool>,
+                action: @escaping () async -> Void,
+                label: () -> Label) {
+        self.init(
+            executingID: EmptyIdentifier(),
+            isExecuting: Binding(
+                get: { isExecuting.wrappedValue ? EmptyIdentifier() : nil },
+                set: { isExecuting.wrappedValue = $0 != nil }),
+            action: action,
+            label: label
+        )
+    }
 
     /// Creates an asynchronous button with the given action and label.
     /// - Parameters:
@@ -26,50 +113,128 @@ public struct AsyncButton<Label: View>: View {
     @inlinable
     public init(action: @escaping () async -> Void,
                 label: () -> Label) {
-        self.action = action
-        self.label = label()
-    }
-    
-    public var body: some View {
-        Button(action: {
-            guard !isExecuting else { return }
-
-            Task { @MainActor in
-                isExecuting = true
-
-                await action()
-
-                isExecuting = false
-            }
-        }, label: { label })
-        .isLoading(isExecuting)
+        self.init(
+            executingID: EmptyIdentifier(),
+            isExecuting: .constant(nil),
+            action: action,
+            label: label
+        )
     }
 }
 
+/// An extension for AsyncButton with an empty identifier and a default label of type Text.
 @available(macOS 10.15, *)
-extension AsyncButton where Label == Text {
+extension AsyncButton where Identifier == EmptyIdentifier, Label == Text {
+    
     /// Creates an asynchronous button with the given title and action.
     /// - Parameters:
     ///   - title: The title of the button.
     ///   - action: The asynchronous action to perform when the button is tapped.
+    public init(_ title: some StringProtocol,
+                action: @escaping () async -> Void) {
+        self.init(action: action, label: { Text(title) })
+    }
+
+    /// Creates an asynchronous button with the given title, binding for execution state, and action.
+    /// - Parameters:
+    ///   - title: The title of the button.
+    ///   - isExecuting: A Binding that stores and sets the execution state.
+    ///   - action: The asynchronous action to perform when the button is tapped.
     @inlinable
-    public init(_ title: some StringProtocol, action: @escaping () async -> Void) {
-        self.init(action: action) { Text(title) }
+    public init(_ title: some StringProtocol,
+                isExecuting: Binding<Bool>,
+                action: @escaping () async -> Void) {
+        self.init(isExecuting: isExecuting, action: action, label: { Text(title) })
     }
 }
 
-@available(iOS 14.0, macOS 11.0, *)
+/// A struct representing an empty identifier.
+public struct EmptyIdentifier: Equatable {
+    public init() { }
+}
+
+@available(iOS 15.0, macOS 11.0, *)
 struct AsyncButton_Previews: PreviewProvider {
-    static var previews: some View {
-        AsyncButton(action: {
-            try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 3)
-        }, label: {
-            Text("Async Button")
-        })
-        .buttonStyle(.solid(
+    static var solid: some ButtonStyle {
+        .solid(
             labelTextColorSet: SolidButton_Previews.SolidPreviewStyle.blue.labelTextColorSet,
             labelColorSet: SolidButton_Previews.SolidPreviewStyle.blue.labelColorSet,
             outlineColorSet: SolidButton_Previews.SolidPreviewStyle.blue.outlineColorSet
-        ))
+        )
+    }
+
+    static var previews: some View {
+        Group {
+            VStack(spacing: 16) {
+                AsyncButton("Test async button style") {
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                }
+                .buttonStyle(.isLoading)
+                
+                AsyncButton("Test solid with async button style") {
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                }
+                .buttonStyle(solid)
+                .buttonStyle(.isLoading)
+                
+                AsyncButton("Test async with solid button style") {
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                }
+                .buttonStyle(.isLoading)
+                .buttonStyle(solid)
+            }
+
+            synchronizedAsyncButtons
+
+            differentIDAsyncButtons
+        }
+    }
+
+    static var synchronizedAsyncButtons: some View {
+        StatePreview(initial: false) { binding in
+            VStack {
+                AsyncButton("AsyncButton", isExecuting: binding) {
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                }
+                .buttonStyle(.isLoading)
+                
+                AsyncButton("Bindable solid button with  async style", isExecuting: binding) {
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 1)
+                }
+                .buttonStyle(solid)
+                .buttonStyle(.isLoading)
+
+                AsyncButton("AsyncButton with solid style", isExecuting: binding) {
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 3)
+                }
+                .buttonStyle(.isLoading)
+                .buttonStyle(solid)
+            }
+        }
+        .previewDisplayName("Synchronized AsyncButtons")
+    }
+
+    static var differentIDAsyncButtons: some View {
+        StatePreview(initial: Optional<Int>.none) { binding in
+            VStack(spacing: 16) {
+                AsyncButton("AsyncButton", executingID: 1, isExecuting: binding) {
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                }
+                .buttonStyle(.isLoading)
+             
+                AsyncButton("Bindable solid button with  async style", executingID: 3, isExecuting: binding) {
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 1)
+                }
+                .buttonStyle(solid)
+                .buttonStyle(.isLoading)
+
+                AsyncButton("AsyncButton with solid style", executingID: 1, isExecuting: binding) {
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 3)
+                }
+                .buttonStyle(.isLoading)
+                .buttonStyle(solid)
+            }
+        }
+        .previewDisplayName("DIfferent ID AsyncButton")
     }
 }
