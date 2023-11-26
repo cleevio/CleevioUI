@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+public struct AsyncButtonOptions: OptionSet {
+    public let rawValue: UInt
+
+    public init(rawValue: UInt) {
+        self.rawValue = rawValue
+    }
+
+    public static let allowsExecutionWhenExecuting = Self(rawValue: 1 << 0)
+    public static let cancelsPreviousTaskWhenExecuting = Self(rawValue: 1 << 1)
+}
+
 /// A button that performs an asynchronous action when tapped while guarding that the action cannot be run again while the previous one is still running.
 @available(macOS 10.15, *)
 public struct AsyncButton<Label: View, Identifier: Equatable>: View {
@@ -23,8 +34,13 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
     /// Internal state to track whether the action is currently executing a task.
     @Binding public var isExecuting: Identifier?
 
+    var options: AsyncButtonOptions
+
     /// Internal state to track whether the action is currently executing.
     @State private var isExecutingInternal = false
+
+    /// Last running task stored for potential cancelation purposes
+    @State private var savedTask: Task<Void, Never>?
 
     /// Creates an asynchronous button with the given action and label.
     /// - Parameters:
@@ -34,10 +50,12 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
     ///   - label: A closure returning the label of the button.
     public init(executingID: Identifier,
                 isExecuting: Binding<Identifier?>,
+                options: AsyncButtonOptions = [],
                 action: @escaping () async -> Void,
                 label: () -> Label) {
         self.action = action
         self.id = executingID
+        self.options = options
         self.label = label()
         self._isExecuting = isExecuting
     }
@@ -47,20 +65,26 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
         let isButtonExecuting = isExecutingInternal || isExecuting == id
 
         return Button(action: {
-            guard isExecuting == nil else { return }
+            guard !isButtonExecuting || options.contains(.allowsExecutionWhenExecuting) else { return }
 
-            Task { @MainActor in
+            if options.contains(.cancelsPreviousTaskWhenExecuting) {
+                savedTask?.cancel()
+            }
+
+            savedTask = Task { @MainActor in
                 isExecuting = id
                 isExecutingInternal = true
 
                 await action()
 
-                isExecuting = nil
-                isExecutingInternal = false
+                if !Task.isCancelled {
+                    isExecuting = nil
+                    isExecutingInternal = false
+                }
             }
         }, label: { label })
         .isLoading(isButtonExecuting)
-        .disabled(!isButtonExecuting && isExecuting != nil)
+        .disabled(options.contains(.allowsExecutionWhenExecuting) ? false : isButtonExecuting || isExecuting != nil)
     }
 }
 
@@ -78,8 +102,9 @@ extension AsyncButton where Label == Text {
     public init(_ title: some StringProtocol,
                 executingID: Identifier,
                 isExecuting: Binding<Identifier?>,
+                options: AsyncButtonOptions = [],
                 action: @escaping () async -> Void) {
-        self.init(executingID: executingID, isExecuting: isExecuting, action: action) { Text(title) }
+        self.init(executingID: executingID, isExecuting: isExecuting, options: options, action: action) { Text(title) }
     }
 }
 
@@ -94,13 +119,15 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier {
     ///   - label: A closure returning the label of the button.
     @inlinable
     public init(isExecuting: Binding<Bool>,
+                options: AsyncButtonOptions = [],
                 action: @escaping () async -> Void,
                 label: () -> Label) {
         self.init(
             executingID: EmptyAsyncButtonIdentifier(),
             isExecuting: Binding(
                 get: { isExecuting.wrappedValue ? EmptyAsyncButtonIdentifier() : nil },
-                set: { isExecuting.wrappedValue = $0 != nil }),
+                set: { isExecuting.wrappedValue = $0 != nil })
+            , options: options,
             action: action,
             label: label
         )
@@ -111,11 +138,13 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier {
     ///   - action: The asynchronous action to perform when the button is tapped.
     ///   - label: A closure returning the label of the button.
     @inlinable
-    public init(action: @escaping () async -> Void,
+    public init(options: AsyncButtonOptions = [],
+                action: @escaping () async -> Void,
                 label: () -> Label) {
         self.init(
             executingID: EmptyAsyncButtonIdentifier(),
             isExecuting: .constant(nil),
+            options: options,
             action: action,
             label: label
         )
@@ -131,8 +160,9 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier, Label == T
     ///   - title: The title of the button.
     ///   - action: The asynchronous action to perform when the button is tapped.
     public init(_ title: some StringProtocol,
+                options: AsyncButtonOptions = [],
                 action: @escaping () async -> Void) {
-        self.init(action: action, label: { Text(title) })
+        self.init(options: options, action: action, label: { Text(title) })
     }
 
     /// Creates an asynchronous button with the given title, binding for execution state, and action.
@@ -143,8 +173,9 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier, Label == T
     @inlinable
     public init(_ title: some StringProtocol,
                 isExecuting: Binding<Bool>,
+                options: AsyncButtonOptions = [],
                 action: @escaping () async -> Void) {
-        self.init(isExecuting: isExecuting, action: action, label: { Text(title) })
+        self.init(isExecuting: isExecuting, options: options, action: action, label: { Text(title) })
     }
 }
 
@@ -169,7 +200,7 @@ struct AsyncButton_Previews: PreviewProvider {
             VStack(spacing: 16) {
                 AsyncButton("Test async button style") {
                     print("Doing activity")
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 2)
                 }
                 .buttonStyle(.isLoading)
                 

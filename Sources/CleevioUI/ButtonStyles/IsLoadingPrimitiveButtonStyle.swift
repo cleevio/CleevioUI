@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 /// A simple PrimitiveButtonStyle that displays a button with loading state handling.
-/// When isLoading is set to true, the button is disabled and overlays a progress view.
+/// When isLoading is set to true, the button is overlayed by a progress view.
 /// To configure progressView, all it takes is to add a modifier for progressView
 @available(iOS 15.0, *)
 public struct IsLoadingPrimitiveButtonStyle: PrimitiveButtonStyle {
@@ -27,7 +27,6 @@ public struct IsLoadingPrimitiveButtonStyle: PrimitiveButtonStyle {
     /// - Returns: A modified button view based on loading state.
     public func makeBody(configuration: PrimitiveButtonStyleConfiguration) -> some View {
         Button(configuration)
-            .disabled(isLoading)
             .overlay {
                 if isLoading {
                     ProgressView()
