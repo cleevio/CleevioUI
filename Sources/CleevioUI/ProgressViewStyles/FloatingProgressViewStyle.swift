@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, *)
 public struct FloatingProgressViewStyle<
     Shape: SwiftUI.Shape,
     BackgroundStyle: SwiftUI.ShapeStyle,
@@ -54,7 +54,7 @@ public struct FloatingProgressViewStyle<
     }
 }
 
-@available(iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, *)
 public extension ProgressViewStyle where Self == FloatingProgressViewStyle<Circle, Material, HierarchicalShapeStyle> {
     
     /// Initializes the FloatingProgressViewStyle with default parameters.
@@ -62,7 +62,7 @@ public extension ProgressViewStyle where Self == FloatingProgressViewStyle<Circl
     static var floating: Self { self.init() }
 }
 
-@available(iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, *)
 public extension FloatingProgressViewStyle<Circle, Material, HierarchicalShapeStyle> {
     
     /// Initializes the FloatingProgressViewStyle with default parameters.
@@ -70,7 +70,7 @@ public extension FloatingProgressViewStyle<Circle, Material, HierarchicalShapeSt
     init() { self.init(configuration: .init()) }
 }
 
-@available(iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, *)
 public extension FloatingProgressViewStyle<Circle, Material, HierarchicalShapeStyle>.StyleConfiguration {
     
     /// Initializes the Configuration with default parameters.
@@ -91,7 +91,7 @@ public extension FloatingProgressViewStyle<Circle, Material, HierarchicalShapeSt
     }
 }
 
-@available(iOS 15.0, macOS 11.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 struct FloatingProgressViewStyle_Previews: PreviewProvider {
     static var previews: some View {
         Color.red

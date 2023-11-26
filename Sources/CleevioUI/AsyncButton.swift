@@ -199,7 +199,7 @@ public struct EmptyAsyncButtonIdentifier: Equatable {
     init() { }
 }
 
-@available(iOS 15.0, macOS 11.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 struct AsyncButton_Previews: PreviewProvider {
     static var solid: some ButtonStyle {
         .solid(
