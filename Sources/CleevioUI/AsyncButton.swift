@@ -81,8 +81,13 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
             }
 
             savedTask = Task { @MainActor in
-                isExecuting = id
-                isExecutingInternal = true
+                if isExecuting != id {
+                    isExecuting = id
+                }
+
+                if !isExecutingInternal {
+                    isExecutingInternal = true
+                }
 
                 await action()
 
