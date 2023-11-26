@@ -41,7 +41,7 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
     @Binding public var isExecuting: Identifier?
 
     /// The options that define the button's behavior when it's tapped.
-    var options: AsyncButtonOptions
+    public var options: AsyncButtonOptions
 
     /// A private state that tracks whether the button's action is currently executing.
     @State private var isExecutingInternal = false
@@ -177,6 +177,7 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier, Label == T
     ///   - title: The title of the button.
     ///   - options: The options that define the button's behavior when it's tapped.
     ///   - action: The asynchronous action to perform when the button is tapped.
+    @inlinable
     public init(_ title: some StringProtocol,
                 options: AsyncButtonOptions = [],
                 action: @escaping () async -> Void) {
