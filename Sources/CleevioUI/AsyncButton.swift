@@ -98,7 +98,7 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
             }
         }, label: { label })
         .isLoading(isButtonExecuting)
-        .disabled(options.contains(.allowsConcurrentExecutions) ? false : isButtonExecuting || isExecuting != nil)
+        .disabled(!options.contains(.allowsConcurrentExecutions) && ( isButtonExecuting || isExecuting != nil))
     }
 }
 
@@ -215,24 +215,33 @@ struct AsyncButton_Previews: PreviewProvider {
         )
     }
 
+    static func buttonAction(timeInSeconds: UInt64) async {
+        print("Doing activity")
+        try? await Task.sleep(nanoseconds: NSEC_PER_SEC * timeInSeconds)
+
+        if Task.isCancelled {
+            print("Task is canceled")
+        } else {
+            print("Finished")
+        }
+    }
+
     static var previews: some View {
         Group {
             VStack(spacing: 16) {
-                AsyncButton("Test async button style") {
-                    print("Doing activity")
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 2)
+                AsyncButton("Test async button style", options: [.allowsConcurrentExecutions, .cancelsRunningExecution]) {
+                    await buttonAction(timeInSeconds: 5)
                 }
                 .buttonStyle(.isLoading)
                 
                 AsyncButton("Test solid with async button style") {
-                    print("Doing activity")
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                    await buttonAction(timeInSeconds: 5)
                 }
                 .buttonStyle(solid)
                 .buttonStyle(.isLoading)
                 
                 AsyncButton("Test async with solid button style") {
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                    await buttonAction(timeInSeconds: 5)
                 }
                 .buttonStyle(.isLoading)
                 .buttonStyle(solid)
@@ -248,21 +257,18 @@ struct AsyncButton_Previews: PreviewProvider {
         StatePreview(initial: false) { binding in
             VStack {
                 AsyncButton("AsyncButton", isExecuting: binding) {
-                    print("Doing activity")
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                    await buttonAction(timeInSeconds: 5)
                 }
                 .buttonStyle(.isLoading)
                 
                 AsyncButton("Bindable solid button with  async style", isExecuting: binding) {
-                    print("Doing activity")
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 1)
+                    await buttonAction(timeInSeconds: 1)
                 }
                 .buttonStyle(solid)
                 .buttonStyle(.isLoading)
 
                 AsyncButton("AsyncButton with solid style", isExecuting: binding) {
-                    print("Doing activity")
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 3)
+                    await buttonAction(timeInSeconds: 3)
                 }
                 .buttonStyle(.isLoading)
                 .buttonStyle(solid)
@@ -275,18 +281,18 @@ struct AsyncButton_Previews: PreviewProvider {
         StatePreview(initial: Optional<Int>.none) { binding in
             VStack(spacing: 16) {
                 AsyncButton("AsyncButton", executingID: 1, isExecuting: binding) {
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+                    await buttonAction(timeInSeconds: 5)
                 }
                 .buttonStyle(.isLoading)
              
                 AsyncButton("Bindable solid button with  async style", executingID: 3, isExecuting: binding) {
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 1)
+                    await buttonAction(timeInSeconds: 1)
                 }
                 .buttonStyle(solid)
                 .buttonStyle(.isLoading)
 
                 AsyncButton("AsyncButton with solid style", executingID: 1, isExecuting: binding) {
-                    try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 3)
+                    await buttonAction(timeInSeconds: 3)
                 }
                 .buttonStyle(.isLoading)
                 .buttonStyle(solid)
