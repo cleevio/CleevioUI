@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// An option set that defines behaviors for `AsyncButton`.
 public struct AsyncButtonOptions: OptionSet {
     public let rawValue: UInt
 
@@ -14,40 +15,48 @@ public struct AsyncButtonOptions: OptionSet {
         self.rawValue = rawValue
     }
 
-    public static let allowsExecutionWhenExecuting = Self(rawValue: 1 << 0)
-    public static let cancelsPreviousTaskWhenExecuting = Self(rawValue: 1 << 1)
+    /// An option that allows the button to initiate multiple executions concurrently.
+    public static let allowsConcurrentExecutions = Self(rawValue: 1 << 0)
+
+    /// An option that causes the button to abort any running execution when a new execution is initiated.
+    public static let cancelsRunningExecution = Self(rawValue: 1 << 1)
 }
 
-/// A button that performs an asynchronous action when tapped while guarding that the action cannot be run again while the previous one is still running.
+/// A button that initiates an asynchronous action when tapped.
+///
+/// This button is designed to handle concurrent or repeated taps by using the behaviors defined in `AsyncButtonOptions`.
 @available(macOS 10.15, *)
 public struct AsyncButton<Label: View, Identifier: Equatable>: View {
 
-    /// The identifier of the button.
+    /// The unique identifier for the button.
     public var id: Identifier
 
     /// The asynchronous action to perform when the button is tapped.
     public var action: () async -> Void
     
-    /// The label of the button.
+    /// The visual label for the button.
     public var label: Label
     
-    /// Internal state to track whether the action is currently executing a task.
+    /// A binding that tracks whether the button's action is currently executing.
     @Binding public var isExecuting: Identifier?
 
+    /// The options that define the button's behavior when it's tapped.
     var options: AsyncButtonOptions
 
-    /// Internal state to track whether the action is currently executing.
+    /// A private state that tracks whether the button's action is currently executing.
     @State private var isExecutingInternal = false
 
-    /// Last running task stored for potential cancelation purposes
+    /// The last running task, stored for potential cancellation.
     @State private var savedTask: Task<Void, Never>?
 
-    /// Creates an asynchronous button with the given action and label.
+    /// Creates a new asynchronous button with the given parameters.
+    ///
     /// - Parameters:
-    ///   - executingID: The unique identifier of the button that is used for setting isExecuting binding.
-    ///   - isExecuting: A Binding that stores and sets the currently executing identifier.
+    ///   - executingID: The unique identifier for the button.
+    ///   - isExecuting: A binding that sets and stores the currently executing identifier.
+    ///   - options: The options that define the button's behavior when it's tapped.
     ///   - action: The asynchronous action to perform when the button is tapped.
-    ///   - label: A closure returning the label of the button.
+    ///   - label: A closure that returns the button's visual label.
     public init(executingID: Identifier,
                 isExecuting: Binding<Identifier?>,
                 options: AsyncButtonOptions = [],
@@ -65,9 +74,9 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
         let isButtonExecuting = isExecutingInternal || isExecuting == id
 
         return Button(action: {
-            guard !isButtonExecuting || options.contains(.allowsExecutionWhenExecuting) else { return }
+            guard !isButtonExecuting || options.contains(.allowsConcurrentExecutions) else { return }
 
-            if options.contains(.cancelsPreviousTaskWhenExecuting) {
+            if options.contains(.cancelsRunningExecution) {
                 savedTask?.cancel()
             }
 
@@ -84,7 +93,7 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
             }
         }, label: { label })
         .isLoading(isButtonExecuting)
-        .disabled(options.contains(.allowsExecutionWhenExecuting) ? false : isButtonExecuting || isExecuting != nil)
+        .disabled(options.contains(.allowsConcurrentExecutions) ? false : isButtonExecuting || isExecuting != nil)
     }
 }
 
@@ -93,10 +102,12 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
 extension AsyncButton where Label == Text {
     
     /// Creates an asynchronous button with the given title and action.
+    ///
     /// - Parameters:
     ///   - title: The title of the button.
     ///   - executingID: The unique identifier of the button that is used for setting isExecuting binding.
     ///   - isExecuting: A Binding that stores and sets the currently executing identifier.
+    ///   - options: The options that define the button's behavior when it's tapped.
     ///   - action: The asynchronous action to perform when the button is tapped.
     @inlinable
     public init(_ title: some StringProtocol,
@@ -135,6 +146,7 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier {
 
     /// Creates an asynchronous button with the given action and label.
     /// - Parameters:
+    ///   - options: The options that define the button's behavior when it's tapped.
     ///   - action: The asynchronous action to perform when the button is tapped.
     ///   - label: A closure returning the label of the button.
     @inlinable
@@ -158,6 +170,7 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier, Label == T
     /// Creates an asynchronous button with the given title and action.
     /// - Parameters:
     ///   - title: The title of the button.
+    ///   - options: The options that define the button's behavior when it's tapped.
     ///   - action: The asynchronous action to perform when the button is tapped.
     public init(_ title: some StringProtocol,
                 options: AsyncButtonOptions = [],
@@ -169,6 +182,7 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier, Label == T
     /// - Parameters:
     ///   - title: The title of the button.
     ///   - isExecuting: A Binding that stores and sets the execution state.
+    ///   - options: The options that define the button's behavior when it's tapped.
     ///   - action: The asynchronous action to perform when the button is tapped.
     @inlinable
     public init(_ title: some StringProtocol,
