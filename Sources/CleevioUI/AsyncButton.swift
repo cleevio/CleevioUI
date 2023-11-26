@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// A button that performs an asynchronous action when tapped while guarding that the action is run maximally once at the same time.
+/// A button that performs an asynchronous action when tapped while guarding that the action cannot be run again while the previous one is still running.
 @available(macOS 10.15, *)
 public struct AsyncButton<Label: View, Identifier: Equatable>: View {
 
@@ -85,7 +85,7 @@ extension AsyncButton where Label == Text {
 
 /// An extension for AsyncButton with an empty identifier.
 @available(macOS 10.15, *)
-extension AsyncButton where Identifier == EmptyIdentifier {
+extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier {
     
     /// Creates an asynchronous button with the given action, label, and binding for execution state.
     /// - Parameters:
@@ -97,9 +97,9 @@ extension AsyncButton where Identifier == EmptyIdentifier {
                 action: @escaping () async -> Void,
                 label: () -> Label) {
         self.init(
-            executingID: EmptyIdentifier(),
+            executingID: EmptyAsyncButtonIdentifier(),
             isExecuting: Binding(
-                get: { isExecuting.wrappedValue ? EmptyIdentifier() : nil },
+                get: { isExecuting.wrappedValue ? EmptyAsyncButtonIdentifier() : nil },
                 set: { isExecuting.wrappedValue = $0 != nil }),
             action: action,
             label: label
@@ -114,7 +114,7 @@ extension AsyncButton where Identifier == EmptyIdentifier {
     public init(action: @escaping () async -> Void,
                 label: () -> Label) {
         self.init(
-            executingID: EmptyIdentifier(),
+            executingID: EmptyAsyncButtonIdentifier(),
             isExecuting: .constant(nil),
             action: action,
             label: label
@@ -124,7 +124,7 @@ extension AsyncButton where Identifier == EmptyIdentifier {
 
 /// An extension for AsyncButton with an empty identifier and a default label of type Text.
 @available(macOS 10.15, *)
-extension AsyncButton where Identifier == EmptyIdentifier, Label == Text {
+extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier, Label == Text {
     
     /// Creates an asynchronous button with the given title and action.
     /// - Parameters:
@@ -149,8 +149,9 @@ extension AsyncButton where Identifier == EmptyIdentifier, Label == Text {
 }
 
 /// A struct representing an empty identifier.
-public struct EmptyIdentifier: Equatable {
-    public init() { }
+public struct EmptyAsyncButtonIdentifier: Equatable {
+    @usableFromInline
+    init() { }
 }
 
 @available(iOS 15.0, macOS 11.0, *)
@@ -167,11 +168,13 @@ struct AsyncButton_Previews: PreviewProvider {
         Group {
             VStack(spacing: 16) {
                 AsyncButton("Test async button style") {
+                    print("Doing activity")
                     try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
                 }
                 .buttonStyle(.isLoading)
                 
                 AsyncButton("Test solid with async button style") {
+                    print("Doing activity")
                     try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
                 }
                 .buttonStyle(solid)
@@ -194,17 +197,20 @@ struct AsyncButton_Previews: PreviewProvider {
         StatePreview(initial: false) { binding in
             VStack {
                 AsyncButton("AsyncButton", isExecuting: binding) {
+                    print("Doing activity")
                     try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
                 }
                 .buttonStyle(.isLoading)
                 
                 AsyncButton("Bindable solid button with  async style", isExecuting: binding) {
+                    print("Doing activity")
                     try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 1)
                 }
                 .buttonStyle(solid)
                 .buttonStyle(.isLoading)
 
                 AsyncButton("AsyncButton with solid style", isExecuting: binding) {
+                    print("Doing activity")
                     try? await Task.sleep(nanoseconds: NSEC_PER_SEC * 3)
                 }
                 .buttonStyle(.isLoading)
