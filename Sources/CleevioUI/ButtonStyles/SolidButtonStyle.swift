@@ -1,5 +1,7 @@
 import SwiftUI
 
+// TODO: Use ProgressViewStyle for loading view (or completely erase it from init and just have it being set on the project)
+
 /// A custom button style that allows you to define the appearance of a button with various states and loading view.
 @available(macOS 10.15, *)
 public struct SolidButtonStyle<
@@ -76,7 +78,7 @@ public struct SolidButtonStyle<
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .disabled(!isEnabled || isLoading)
+            .disabled(isLoading)
             .frame(maxWidth: width)
             .padding(labelPadding)
             .background(background(isEnabled, configuration.isPressed))
