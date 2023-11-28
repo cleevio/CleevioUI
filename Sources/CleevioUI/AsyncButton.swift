@@ -91,7 +91,11 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
         }
 
         var isButtonDisabled: Bool {
-            !options.contains(.allowsConcurrentExecutions) && ( isButtonExecuting || executingIdentifier != nil)
+            if options.contains(.allowsConcurrentExecutions) {
+                return false
+            }
+
+            return !isButtonExecuting && executingIdentifier != nil
         }
 
         var shouldCancelPreviousTask: Bool {
@@ -315,21 +319,20 @@ struct AsyncButton_Previews: PreviewProvider {
     static var differentIDAsyncButtons: some View {
         StatePreview(initial: Optional<Int>.none) { binding in
             VStack(spacing: 16) {
-                AsyncButton("AsyncButton", executingID: 1, isExecuting: binding) {
+                AsyncButton("AsyncButton with ID 1", executingID: 1, isExecuting: binding) {
                     await buttonAction(timeInSeconds: 5)
                 }
                 .buttonStyle(.isLoading)
              
-                AsyncButton("Bindable solid button with  async style", executingID: 3, isExecuting: binding) {
+                AsyncButton("Bindable solid button with async style with ID 3", executingID: 3, isExecuting: binding) {
                     await buttonAction(timeInSeconds: 1)
                 }
                 .buttonStyle(solid)
                 .buttonStyle(.isLoading)
 
-                AsyncButton("AsyncButton with solid style", executingID: 1, isExecuting: binding) {
+                AsyncButton("Bindable solid button with  async style with ID 1", executingID: 1, isExecuting: binding) {
                     await buttonAction(timeInSeconds: 3)
                 }
-                .buttonStyle(.isLoading)
                 .buttonStyle(solid)
             }
         }

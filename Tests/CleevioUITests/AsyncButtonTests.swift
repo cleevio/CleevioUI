@@ -23,7 +23,7 @@ final class AsyncButtonTests: XCTestCase {
 
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution when executing.")
         XCTAssertFalse(state.shouldCancelPreviousTask, "Previous task should not be canceled")
-        XCTAssertTrue(state.isButtonDisabled, "Button should not be disabled with default options set when executing")
+        XCTAssertFalse(state.isButtonDisabled, "Button should not be disabled with default options set when executing")
         XCTAssertTrue(state.isButtonLoading, "Button should be in loading state when isExecutingInternal is true.")
     }
 
@@ -32,7 +32,7 @@ final class AsyncButtonTests: XCTestCase {
 
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution when executing.")
         XCTAssertFalse(state.shouldCancelPreviousTask, "Previous task should not be canceled")
-        XCTAssertTrue(state.isButtonDisabled, "Button should not be disabled with default options set and same identifier executing.")
+        XCTAssertFalse(state.isButtonDisabled, "Button should not be disabled with default options set and same identifier executing.")
         XCTAssertTrue(state.isButtonLoading, "Button should be in loading state when same identifier is executing.")
     }
 
@@ -41,7 +41,7 @@ final class AsyncButtonTests: XCTestCase {
 
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution when executing.")
         XCTAssertFalse(state.shouldCancelPreviousTask, "Previous task should not be canceled")
-        XCTAssertTrue(state.isButtonDisabled, "Button should not be disabled with default options set and executing with identifier.")
+        XCTAssertFalse(state.isButtonDisabled, "Button should not be disabled with default options set and executing with identifier.")
         XCTAssertTrue(state.isButtonLoading, "Button should be in loading state when executing with same identifier.")
     }
 
@@ -78,7 +78,7 @@ final class AsyncButtonTests: XCTestCase {
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution when only .cancelsRunningExecution option is set.")
         XCTAssertTrue(state.shouldCancelPreviousTask, "Previous task should be canceled")
         XCTAssertTrue(state.isButtonLoading, "Button should be in loading state when isExecutingInternal is true.")
-        XCTAssertTrue(state.isButtonDisabled, "Button should be disabled when only .cancelsRunningExecution option is set")
+        XCTAssertFalse(state.isButtonDisabled, "Button should not be disabled when only .cancelsRunningExecution option is set")
     }
 
     func testCancelsRunningExecutionWithConcurrentExecutionsOptions() {
@@ -96,6 +96,15 @@ final class AsyncButtonTests: XCTestCase {
         XCTAssertTrue(state.isNewExecutingAllowed, "It should allow isNewExecutingAllowed when .allowsConcurrentExecutions option is set")
         XCTAssertTrue(state.shouldCancelPreviousTask, "Previous task should be canceled")
         XCTAssertTrue(state.isButtonLoading, "Button should be in loading state when isExecutingInternal is true.")
+        XCTAssertFalse(state.isButtonDisabled, "Button should be not disabled when .allowsConcurrentExecutions option is set")
+    }
+
+    func testCancelsRunningExecutionWithConcurrentExecutionsOptionsWhenDifferentIdentifierExecuting() {
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isExecuting: 1, options: [.cancelsRunningExecution, .allowsConcurrentExecutions])
+
+        XCTAssertTrue(state.isNewExecutingAllowed, "It should allow isNewExecutingAllowed when .allowsConcurrentExecutions option is set")
+        XCTAssertTrue(state.shouldCancelPreviousTask, "Previous task should be canceled")
+        XCTAssertFalse(state.isButtonLoading, "Button should be in loading state when different identifier is executing .")
         XCTAssertFalse(state.isButtonDisabled, "Button should be not disabled when .allowsConcurrentExecutions option is set")
     }
 }

@@ -27,6 +27,7 @@ public struct IsLoadingPrimitiveButtonStyle: PrimitiveButtonStyle {
     /// - Returns: A modified button view based on loading state.
     public func makeBody(configuration: PrimitiveButtonStyleConfiguration) -> some View {
         Button(configuration)
+            .disabled(isLoading)
             .overlay {
                 if isLoading {
                     ProgressView()
