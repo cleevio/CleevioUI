@@ -68,15 +68,50 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
         self.label = label()
         self._isExecuting = isExecuting
     }
+
+    struct ButtonState {
+        var id: Identifier?
+        var isButtonExecuting: Bool
+        var executingIdentifier: Identifier?
+        var options: AsyncButtonOptions
+
+        init(id: Identifier? = nil, isExecutingInternal: Bool, isExecuting: Identifier? = nil, options: AsyncButtonOptions) {
+            self.id = id
+            self.isButtonExecuting = isExecutingInternal || isExecuting == id
+            self.executingIdentifier = isExecuting
+            self.options = options
+        }
+
+        var isNewExecutingAllowed: Bool {
+            (!isButtonExecuting && executingIdentifier == nil) || options.contains(.allowsConcurrentExecutions)
+        }
+
+        var isButtonLoading: Bool { 
+            isButtonExecuting
+        }
+
+        var isButtonDisabled: Bool {
+            !options.contains(.allowsConcurrentExecutions) && ( isButtonExecuting || executingIdentifier != nil)
+        }
+
+        var shouldCancelPreviousTask: Bool {
+            options.contains(.cancelsRunningExecution)
+        }
+    }
     
     /// The body of the asynchronous button.
     public var body: some View {
-        let isButtonExecuting = isExecutingInternal || isExecuting == id
+        let state = ButtonState(
+            id: id,
+            isExecutingInternal: isExecutingInternal,
+            isExecuting: isExecuting,
+            options: options
+        )
 
         return Button(action: {
-            guard !isButtonExecuting || options.contains(.allowsConcurrentExecutions) else { return }
+            guard state.isNewExecutingAllowed else { return }
 
-            if options.contains(.cancelsRunningExecution) {
+            if state.shouldCancelPreviousTask {
                 savedTask?.cancel()
             }
 
@@ -97,8 +132,8 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
                 }
             }
         }, label: { label })
-        .isLoading(isButtonExecuting)
-        .disabled(!options.contains(.allowsConcurrentExecutions) && ( isButtonExecuting || isExecuting != nil))
+        .isLoading(state.isButtonLoading)
+        .disabled(state.isButtonDisabled)
     }
 }
 
