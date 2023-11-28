@@ -1,6 +1,6 @@
 //
 //  AsyncButton.swift
-//  
+//
 //
 //  Created by Lukáš Valenta on 23.08.2023.
 //
@@ -69,35 +69,67 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
         self._isExecuting = isExecuting
     }
 
+    /// A structure that represents the state of the button.
+    ///
+    /// This structure contains properties that determine the current state of the button and its behavior based on the options set in `AsyncButtonOptions`.
     struct ButtonState {
+        
+        /// The unique identifier for the button.
         var id: Identifier?
+        
+        /// A Boolean value indicating whether the button's action is currently executing.
         var isButtonExecuting: Bool
+        
+        /// The unique identifier of the currently executing action, if any.
         var executingIdentifier: Identifier?
+        
+        /// The options that define the button's behavior when it's tapped.
         var options: AsyncButtonOptions
-
+        
+        /// Creates a new button state with the given parameters.
+        ///
+        /// - Parameters:
+        ///   - id: The unique identifier for the button.
+        ///   - isExecutingInternal: A Boolean value indicating whether the button's action is currently executing.
+        ///   - isExecuting: The unique identifier of the currently executing action, if any.
+        ///   - options: The options that define the button's behavior when it's tapped.
         init(id: Identifier? = nil, isExecutingInternal: Bool, isExecuting: Identifier? = nil, options: AsyncButtonOptions) {
             self.id = id
             self.isButtonExecuting = isExecutingInternal || isExecuting == id
             self.executingIdentifier = isExecuting
             self.options = options
         }
-
+        
+        
+        /// A Boolean value indicating whether a new execution is allowed.
+        ///
+        /// This value is `true` if the button is not currently executing any action and there is no current executing identifier, or if the button's options allow concurrent executions.
         var isNewExecutingAllowed: Bool {
             (!isButtonExecuting && executingIdentifier == nil) || options.contains(.allowsConcurrentExecutions)
         }
-
-        var isButtonLoading: Bool { 
+        
+        /// A Boolean value indicating whether the button is loading.
+        ///
+        /// This value is `true` if the button's action is currently executing.
+        var isButtonLoading: Bool {
             isButtonExecuting
         }
-
+        
+        /// A Boolean value indicating whether the button is disabled.
+        ///
+        /// This value is `false` if the button's options allow concurrent executions.
+        /// Otherwise, it is `true` if the button is not currently executing any action and there is a current executing identifier.
         var isButtonDisabled: Bool {
             if options.contains(.allowsConcurrentExecutions) {
                 return false
             }
-
+            
             return !isButtonExecuting && executingIdentifier != nil
         }
-
+        
+        /// A Boolean value indicating whether the previous task should be cancelled.
+        ///
+        /// This value is `true` if the button's options specify that running executions should be cancelled when a new execution is initiated by setting `.cancelsRunningExecuting`.
         var shouldCancelPreviousTask: Bool {
             options.contains(.cancelsRunningExecution)
         }
