@@ -286,11 +286,11 @@ public struct EmptyAsyncButtonIdentifier: Equatable {
 
 @available(iOS 15.0, macOS 12.0, *)
 struct AsyncButton_Previews: PreviewProvider {
-    static var solid: some ButtonStyle {
-        .solid(
-            labelTextColorSet: SolidButton_Previews.SolidPreviewStyle.blue.labelTextColorSet,
-            labelColorSet: SolidButton_Previews.SolidPreviewStyle.blue.labelColorSet,
-            outlineColorSet: SolidButton_Previews.SolidPreviewStyle.blue.outlineColorSet
+    static var state: some ButtonStyle {
+        .state(
+            labelTextColorSet: StateButton_Previews.SolidPreviewStyle.blue.labelTextColorSet,
+            labelColorSet: StateButton_Previews.SolidPreviewStyle.blue.labelColorSet,
+            outlineColorSet: StateButton_Previews.SolidPreviewStyle.blue.outlineColorSet
         )
     }
 
@@ -316,14 +316,14 @@ struct AsyncButton_Previews: PreviewProvider {
                 AsyncButton("Test solid with async button style") {
                     await buttonAction(timeInSeconds: 5)
                 }
-                .buttonStyle(solid)
+                .buttonStyle(state)
                 .buttonStyle(.isLoading)
                 
                 AsyncButton("Test async with solid button style") {
                     await buttonAction(timeInSeconds: 5)
                 }
                 .buttonStyle(.isLoading)
-                .buttonStyle(solid)
+                .buttonStyle(state)
             }
 
             synchronizedAsyncButtons
@@ -343,14 +343,14 @@ struct AsyncButton_Previews: PreviewProvider {
                 AsyncButton("Bindable solid button with  async style", isExecuting: binding) {
                     await buttonAction(timeInSeconds: 1)
                 }
-                .buttonStyle(solid)
+                .buttonStyle(state)
                 .buttonStyle(.isLoading)
 
                 AsyncButton("AsyncButton with solid style", isExecuting: binding) {
                     await buttonAction(timeInSeconds: 3)
                 }
                 .buttonStyle(.isLoading)
-                .buttonStyle(solid)
+                .buttonStyle(state)
             }
         }
         .previewDisplayName("Synchronized AsyncButtons")
@@ -367,13 +367,13 @@ struct AsyncButton_Previews: PreviewProvider {
                 AsyncButton("Bindable solid button with async style with ID 3", executingID: 3, isExecuting: binding) {
                     await buttonAction(timeInSeconds: 1)
                 }
-                .buttonStyle(solid)
+                .buttonStyle(state)
                 .buttonStyle(.isLoading)
 
                 AsyncButton("Bindable solid button with  async style with ID 1", executingID: 1, isExecuting: binding) {
                     await buttonAction(timeInSeconds: 3)
                 }
-                .buttonStyle(solid)
+                .buttonStyle(state)
             }
         }
         .previewDisplayName("DIfferent ID AsyncButton")

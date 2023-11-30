@@ -1,9 +1,9 @@
 import SwiftUI
 
 @available(macOS 10.15, *)
-extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke> {
+extension ButtonStyle where Self == StateButtonStyle<Color, RoundedStroke> {
     /// Initializer color sets. It is expected that projects implement their own convenience initializer based on the colors of designer
-    static func solid(
+    static func state(
         labelTextColorSet: ButtonStateColorSet,
         labelColorSet: ButtonStateColorSet,
         outlineColorSet: ButtonStateColorSet,
@@ -14,7 +14,7 @@ extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke> {
         font: Font? = nil,
         fullWidth: Bool = true
     ) -> Self {
-        SolidButtonStyle(
+        StateButtonStyle(
             foregroundColorSet: labelTextColorSet,
             backgroundColorSet: labelColorSet,
             strokeColorSet: outlineColorSet,
@@ -30,7 +30,7 @@ extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke> {
     }
 
     /// Initializer that takes all properties. Mostly for debug purposes, it is preferable to use initializer that takes color sets directly.
-    static func solid(
+    static func state(
         labelTextColor: Color = .white,
         disabledLabelTextColor: Color?,
         pressedLabelTextColor: Color? = nil,
@@ -47,7 +47,7 @@ extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke> {
         font: Font? = nil,
         fullWidth: Bool = true
     ) -> Self {
-        solid(
+        state(
             labelTextColorSet: ButtonStateColorSet(
                 normal: labelTextColor,
                 pressed: pressedLabelTextColor,
@@ -75,7 +75,7 @@ extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke> {
 
 
 @available(iOS 15.0, macOS 12.0, *)
-struct SolidButton_Previews: PreviewProvider {
+struct StateButton_Previews: PreviewProvider {
     // swiftlint:disable closure_body_length
     enum SolidPreviewStyle {
         case blue, red, outline
@@ -150,7 +150,7 @@ struct SolidButton_Previews: PreviewProvider {
             VStack(alignment: .leading, spacing: 16) {
                 AsyncButton("Large Label isLoading", action: { })
                     .isLoading(true)
-                    .buttonStyle(.solid(
+                    .buttonStyle(.state(
                         labelTextColorSet: style.labelTextColorSet,
                         labelColorSet: style.labelColorSet,
                         outlineColorSet: style.outlineColorSet,
@@ -161,7 +161,7 @@ struct SolidButton_Previews: PreviewProvider {
                     ))
 
                 Button("Large Label full width", action: { })
-                    .buttonStyle(.solid(
+                    .buttonStyle(.state(
                         labelTextColorSet: style.labelTextColorSet,
                         labelColorSet: style.labelColorSet,
                         outlineColorSet: style.outlineColorSet,
@@ -171,7 +171,7 @@ struct SolidButton_Previews: PreviewProvider {
                     ))
 
                 Button("Large Label", action: { })
-                    .buttonStyle(.solid(
+                    .buttonStyle(.state(
                         labelTextColorSet: style.labelTextColorSet,
                         labelColorSet: style.labelColorSet,
                         outlineColorSet: style.outlineColorSet,
@@ -182,7 +182,7 @@ struct SolidButton_Previews: PreviewProvider {
 
                 Button(action: { },
                        label: { Text("Medium label") })
-                .buttonStyle(.solid(
+                .buttonStyle(.state(
                     labelTextColorSet: style.labelTextColorSet,
                     labelColorSet: style.labelColorSet,
                     outlineColorSet: style.outlineColorSet,
@@ -191,7 +191,7 @@ struct SolidButton_Previews: PreviewProvider {
 
                 Button(action: { },
                        label: { Text("Medium Label full width") })
-                .buttonStyle(.solid(
+                .buttonStyle(.state(
                     labelTextColorSet: style.labelTextColorSet,
                     labelColorSet: style.labelColorSet,
                     outlineColorSet: style.outlineColorSet,
@@ -202,7 +202,7 @@ struct SolidButton_Previews: PreviewProvider {
                        label: {
                     Label("Medium label  with image", systemImage: "arrow.left")
                 })
-                .buttonStyle(.solid(
+                .buttonStyle(.state(
                     labelTextColorSet: style.labelTextColorSet,
                     labelColorSet: style.labelColorSet,
                     outlineColorSet: style.outlineColorSet,
@@ -211,7 +211,7 @@ struct SolidButton_Previews: PreviewProvider {
 
                 Button(action: { },
                        label: { Text("Small Label") })
-                .buttonStyle(.solid(
+                .buttonStyle(.state(
                     labelTextColorSet: style.labelTextColorSet,
                     labelColorSet: style.labelColorSet,
                     outlineColorSet: style.outlineColorSet,
@@ -222,7 +222,7 @@ struct SolidButton_Previews: PreviewProvider {
 
                 Button(action: { },
                        label: { Text("Small Disabled Label") })
-                .buttonStyle(.solid(
+                .buttonStyle(.state(
                     labelTextColorSet: style.labelTextColorSet,
                     labelColorSet: style.labelColorSet,
                     outlineColorSet: style.outlineColorSet,

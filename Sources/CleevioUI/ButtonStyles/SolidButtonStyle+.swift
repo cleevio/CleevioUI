@@ -1,7 +1,7 @@
 import SwiftUI
 
 @available(macOS 10.15, *)
-public extension SolidButtonStyle where Background == Color, Overlay == RoundedStroke {
+public extension StateButtonStyle where Background == Color, Overlay == RoundedStroke {
     @inlinable
     init(
         foregroundColorSet: ButtonStateColorSet,

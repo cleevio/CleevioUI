@@ -2,7 +2,7 @@ import SwiftUI
 
 // TODO: Use ProgressViewStyle for loading view (or completely erase it from init and just have it being set on the project)
 
-public struct SolidButtonState {
+public struct StateButtonState {
     public let isLoading: Bool
     public let isEnabled: Bool
     public let isPressed: Bool
@@ -17,7 +17,7 @@ public struct SolidButtonState {
 
 /// A custom button style that allows you to define the appearance of a button with various states and loading view.
 @available(macOS 10.15, *)
-public struct SolidButtonStyle<
+public struct StateButtonStyle<
     Background: View,
     Overlay: View
 >: ButtonStyle {
@@ -30,7 +30,7 @@ public struct SolidButtonStyle<
     ///
     /// - Returns: The color to use for the button's text.
     @usableFromInline
-    @ViewBuilder var foreground: (SolidButtonState) -> Color
+    @ViewBuilder var foreground: (StateButtonState) -> Color
     ///  Defines the background view for different button states.
     ///
     /// - Parameters:
@@ -39,7 +39,7 @@ public struct SolidButtonStyle<
     ///
     /// - Returns: The background view for the button.
     @usableFromInline
-    @ViewBuilder var background: (SolidButtonState) -> Background
+    @ViewBuilder var background: (StateButtonState) -> Background
     /// Defines the overlay view for different button states.
     ///
     /// - Parameters:
@@ -48,7 +48,7 @@ public struct SolidButtonStyle<
     ///
     /// - Returns: The overlay view for the button.
     @usableFromInline
-    @ViewBuilder var overlay: (SolidButtonState) -> Overlay
+    @ViewBuilder var overlay: (StateButtonState) -> Overlay
     // The view used as a loading indicator.
     /// The corner radius of the button.
     @usableFromInline
@@ -65,9 +65,9 @@ public struct SolidButtonStyle<
 
     @inlinable
     public init(
-        @ViewBuilder foreground: @escaping (SolidButtonState) -> Color,
-        @ViewBuilder background: @escaping (SolidButtonState) -> Background,
-        @ViewBuilder overlay: @escaping (SolidButtonState) -> Overlay,
+        @ViewBuilder foreground: @escaping (StateButtonState) -> Color,
+        @ViewBuilder background: @escaping (StateButtonState) -> Background,
+        @ViewBuilder overlay: @escaping (StateButtonState) -> Overlay,
         cornerRadius: CGFloat,
         labelPadding: EdgeInsets,
         font: Font?,
@@ -87,7 +87,7 @@ public struct SolidButtonStyle<
     
 
     public func makeBody(configuration: Configuration) -> some View {
-        let buttonState = SolidButtonState(isLoading: isLoading, isEnabled: isEnabled, isPressed: configuration.isPressed)
+        let buttonState = StateButtonState(isLoading: isLoading, isEnabled: isEnabled, isPressed: configuration.isPressed)
 
         configuration.label
             .disabled(isLoading)

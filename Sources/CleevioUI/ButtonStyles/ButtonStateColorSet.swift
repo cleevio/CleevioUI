@@ -36,7 +36,7 @@ public struct ButtonStateColorSet {
     ///   - isPressed: A boolean indicating whether the button is currently pressed.
     ///
     /// - Returns: The color to use based on the button's state (normal, pressed, or disabled).
-    public func color(state: SolidButtonState) -> Color {
+    public func color(state: StateButtonState) -> Color {
         guard state.isEnabled else { return disabled }
         return state.isPressed ? pressed : normal
     }
