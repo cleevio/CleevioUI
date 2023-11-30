@@ -16,18 +16,22 @@ public struct IsLoadingPrimitiveButtonStyle: PrimitiveButtonStyle {
     
     /// Environment variable to track loading state.
     @Environment(\.isLoading) private var isLoading
-    
+
+    public var disabledWhenLoading: Bool
+
     /// Initializes the IsLoadingPrimitiveButtonStyle with a progress view.
     /// - Parameter progressView: A closure returning the progress view to be used.
     @inlinable
-    public init() { }
+    public init(disabledWhenLoading: Bool = true) {
+        self.disabledWhenLoading = disabledWhenLoading
+    }
     
     /// Creates the body of the button with loading state handling.
     /// - Parameter configuration: The button's configuration.
     /// - Returns: A modified button view based on loading state.
     public func makeBody(configuration: PrimitiveButtonStyleConfiguration) -> some View {
         Button(configuration)
-            .disabled(isLoading)
+            .disabled(disabledWhenLoading ? isLoading : false)
             .overlay {
                 if isLoading {
                     ProgressView()
@@ -41,7 +45,12 @@ public extension PrimitiveButtonStyle where Self == IsLoadingPrimitiveButtonStyl
     
     /// A simple PrimitiveButtonStyle that displays a button with loading state handling.
     /// When isLoading is set to true, the button is disabled and overlays a progress view.
-    static var isLoading: Self { self.init() }
+    static var isLoading: Self { self.isLoading() }
+
+    @inlinable
+    static func isLoading(disabledWhenLoading: Bool = true) -> Self {
+        .init(disabledWhenLoading: disabledWhenLoading)
+    }
 }
 
 @available(iOS 15.0, macOS 12.0, *)

@@ -9,6 +9,7 @@
 import SwiftUI
 
 // TODO: consider better support of custom set styles (and with that, remove isLoading entirely, isDisabled should be driven only through Environment(\.isEnabled)
+@available(iOS 14.0, *)
 public struct CLStepperView: View {
     public enum Style {
         case minimal
@@ -98,7 +99,8 @@ public struct CLStepperView: View {
             
             Spacer()
             if isLoading {
-                LoadingView(scale: loadingScale)
+                ProgressView()
+                    .progressViewStyle(DotProgressViewStyle(scale: loadingScale))
                     .frame(width: 50, height: 10)
             } else {
                 Text("\(quantity)")
@@ -127,6 +129,7 @@ public struct CLStepperView: View {
     }
 }
 
+@available(iOS 14.0, *)
 struct CLStepperViewPreview: PreviewProvider {
     static var previews: some View {
         CLStepperView(

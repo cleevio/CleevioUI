@@ -9,9 +9,10 @@
 import XCTest
 import SwiftUI
 
+@available(iOS 15.0, macOS 10.15, *)
 final class AsyncButtonTests: XCTestCase {
     func testDefaultOptions() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, options: [])
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isLoadingEnvironment: false, options: [])
 
         XCTAssertTrue(state.isNewExecutingAllowed, "It should allow new execution when not executing.")
         XCTAssertFalse(state.shouldCancelPreviousTask, "Previous task should not be canceled")
@@ -19,7 +20,7 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testDefaultOptionsWhenExecuting() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, options: [])
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, isLoadingEnvironment: false, options: [])
 
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution when executing.")
         XCTAssertFalse(state.shouldCancelPreviousTask, "Previous task should not be canceled")
@@ -28,7 +29,7 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testDefaultOptionsWhenSameIdentifierIsExecuting() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isExecuting: 0, options: [])
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isExecuting: 0, isLoadingEnvironment: false, options: [])
 
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution when executing.")
         XCTAssertFalse(state.shouldCancelPreviousTask, "Previous task should not be canceled")
@@ -37,7 +38,7 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testDefaultOptionsWhenExecutingWithIdentifier() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, isExecuting: 0, options: [])
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, isExecuting: 0, isLoadingEnvironment: false, options: [])
 
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution when executing.")
         XCTAssertFalse(state.shouldCancelPreviousTask, "Previous task should not be canceled")
@@ -46,7 +47,7 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testDefaultOptionsWhenDifferentIdentifierIsExecuting() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isExecuting: 1, options: [])
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isExecuting: 1, isLoadingEnvironment: false, options: [])
 
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution when executing.")
         XCTAssertFalse(state.shouldCancelPreviousTask, "Previous task should not be canceled")
@@ -55,7 +56,7 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testAllowsConcurrentExecutionsOption() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, options: .allowsConcurrentExecutions)
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, isLoadingEnvironment: false, options: .allowsConcurrentExecutions)
 
         XCTAssertTrue(state.isNewExecutingAllowed, "It should allow new execution when .allowsConcurrentExecutions option is set.")
         XCTAssertFalse(state.shouldCancelPreviousTask, "Previous task should not be canceled")
@@ -64,7 +65,7 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testCancelsRunningExecutionOption() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, options: .cancelsRunningExecution)
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isLoadingEnvironment: false, options: .cancelsRunningExecution)
 
         XCTAssertTrue(state.isNewExecutingAllowed, "It should not allow new execution when only .cancelsRunningExecution option is set.")
         XCTAssertTrue(state.shouldCancelPreviousTask, "Previous task should be canceled")
@@ -73,7 +74,7 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testCancelsRunningExecutionOptionWhenExecuting() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, options: .cancelsRunningExecution)
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, isLoadingEnvironment: false, options: .cancelsRunningExecution)
 
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution when only .cancelsRunningExecution option is set.")
         XCTAssertTrue(state.shouldCancelPreviousTask, "Previous task should be canceled")
@@ -82,7 +83,7 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testCancelsRunningExecutionWithConcurrentExecutionsOptions() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, options: [.cancelsRunningExecution, .allowsConcurrentExecutions])
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isLoadingEnvironment: false, options: [.cancelsRunningExecution, .allowsConcurrentExecutions])
 
         XCTAssertTrue(state.isNewExecutingAllowed, "It should not allow new execution when only .cancelsRunningExecution option is set.")
         XCTAssertTrue(state.shouldCancelPreviousTask, "Previous task should be canceled")
@@ -91,7 +92,7 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testCancelsRunningExecutionWithConcurrentExecutionsOptionsWhenExecuting() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, options: [.cancelsRunningExecution, .allowsConcurrentExecutions])
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: true, isLoadingEnvironment: false, options: [.cancelsRunningExecution, .allowsConcurrentExecutions])
 
         XCTAssertTrue(state.isNewExecutingAllowed, "It should allow isNewExecutingAllowed when .allowsConcurrentExecutions option is set")
         XCTAssertTrue(state.shouldCancelPreviousTask, "Previous task should be canceled")
@@ -100,11 +101,20 @@ final class AsyncButtonTests: XCTestCase {
     }
 
     func testCancelsRunningExecutionWithConcurrentExecutionsOptionsWhenDifferentIdentifierExecuting() {
-        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isExecuting: 1, options: [.cancelsRunningExecution, .allowsConcurrentExecutions])
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isExecuting: 1, isLoadingEnvironment: false, options: [.cancelsRunningExecution, .allowsConcurrentExecutions])
 
         XCTAssertTrue(state.isNewExecutingAllowed, "It should allow isNewExecutingAllowed when .allowsConcurrentExecutions option is set")
         XCTAssertTrue(state.shouldCancelPreviousTask, "Previous task should be canceled")
         XCTAssertFalse(state.isButtonLoading, "Button should be in loading state when different identifier is executing .")
         XCTAssertFalse(state.isButtonDisabled, "Button should be not disabled when .allowsConcurrentExecutions option is set")
+    }
+
+    func testIsLoadingEnvironment() {
+        let state = AsyncButton<EmptyView, Int>.ButtonState(id: 0, isExecutingInternal: false, isExecuting: nil, isLoadingEnvironment: true, options: [])
+
+        XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution with default options")
+        XCTAssertFalse(state.shouldCancelPreviousTask, "It should not allow cancel previous task with default options")
+        XCTAssertTrue(state.isButtonLoading, "Button should be in loading state with isLoadingEnvironment is true.")
+        XCTAssertTrue(state.isButtonLoading, "Button should be in loading state when isLoadingEnvironment is true.")
     }
 }

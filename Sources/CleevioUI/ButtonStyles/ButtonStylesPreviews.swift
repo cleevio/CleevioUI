@@ -1,7 +1,7 @@
 import SwiftUI
 
 @available(macOS 10.15, *)
-extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke, LoadingView> {
+extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke> {
     /// Initializer color sets. It is expected that projects implement their own convenience initializer based on the colors of designer
     static func solid(
         labelTextColorSet: ButtonStateColorSet,
@@ -18,7 +18,6 @@ extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke, Loadi
             foregroundColorSet: labelTextColorSet,
             backgroundColorSet: labelColorSet,
             strokeColorSet: outlineColorSet,
-            loadingViewColor: loadingCircleColor ?? .white,
             cornerRadius: cornerRadius ?? 8,
             labelPadding: EdgeInsets(
                 top: verticalPadding ?? 8,
@@ -75,7 +74,7 @@ extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke, Loadi
 }
 
 
-@available(iOS 14.0, macOS 11.0, *)
+@available(iOS 15.0, macOS 11.0, *)
 struct SolidButton_Previews: PreviewProvider {
     // swiftlint:disable closure_body_length
     enum SolidPreviewStyle {
@@ -146,10 +145,10 @@ struct SolidButton_Previews: PreviewProvider {
         }
     }
 
-    static var previews: some View {
+        static var previews: some View {
         ForEach([SolidPreviewStyle.blue, .red, .outline], id: \.self) { style in
             VStack(alignment: .leading, spacing: 16) {
-                Button("Large Label isLoading", action: { })
+                AsyncButton("Large Label isLoading", action: { })
                     .isLoading(true)
                     .buttonStyle(.solid(
                         labelTextColorSet: style.labelTextColorSet,
@@ -235,6 +234,7 @@ struct SolidButton_Previews: PreviewProvider {
             }
             .padding()
             .previewDisplayName("\(style)")
+            .progressViewStyle(DotProgressViewStyle(circleColor: style == .outline ? .black : .white))
         }
     }
 }

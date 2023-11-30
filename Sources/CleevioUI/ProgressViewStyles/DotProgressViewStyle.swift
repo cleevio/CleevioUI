@@ -8,9 +8,8 @@
 import Foundation
 import SwiftUI
 
-// TODO: Provide isAnimating through binding?
 @available(macOS 10.15, *)
-public struct LoadingView: View {
+public struct DotProgressViewStyle: ProgressViewStyle {
     var scale: CGFloat
     var spacing: CGFloat
     var dotDiameter: CGFloat
@@ -33,8 +32,10 @@ public struct LoadingView: View {
         self.dotCount = dotCount
         self.circleColor = circleColor
     }
-    
-    public var body: some View {
+
+    public func makeBody(configuration: Configuration) -> some View {
+        let calculatedWidth = self.calculatedWidth
+
         VStack {
             HStack(spacing: spacing) {
                 ForEach(0 ..< dotCount, id: \.self) { index in
@@ -53,9 +54,38 @@ public struct LoadingView: View {
             .scaleEffect(.init(scale))
             .frame(minWidth: calculatedWidth, maxWidth: .infinity, minHeight: dotDiameter, maxHeight: .infinity)
             .onAppear {
-                isAnimating = true
+                if !isAnimating {
+                    isAnimating = true
+                }
             }
-
         }
+    }
+}
+
+@available(iOS 14.0, *)
+public extension ProgressViewStyle where Self == DotProgressViewStyle {
+    static var dot: Self { .dot() }
+
+    static func dot(scale: CGFloat = 1,
+                    spacing: CGFloat = 10,
+                    dotDiameter: CGFloat = 10,
+                    dotCount: Int = 3,
+                    circleColor: Color = .white) -> Self {
+        .init(
+            scale: scale,
+            spacing: spacing,
+            dotDiameter: dotDiameter,
+            dotCount: dotCount,
+            circleColor: circleColor
+        )
+    }
+    
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+struct DotProgressViewStyle_Previews: PreviewProvider {
+    static var previews: some View {
+        ProgressView()
+            .progressViewStyle(.dot(circleColor: .black))
     }
 }

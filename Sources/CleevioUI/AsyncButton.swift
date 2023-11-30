@@ -25,7 +25,7 @@ public struct AsyncButtonOptions: OptionSet {
 /// A button that initiates an asynchronous action when tapped.
 ///
 /// This button is designed to handle concurrent or repeated taps by using the behaviors defined in `AsyncButtonOptions`.
-@available(macOS 10.15, *)
+@available(iOS 15.0, macOS 10.15, *)
 public struct AsyncButton<Label: View, Identifier: Equatable>: View {
 
     /// The unique identifier for the button.
@@ -48,6 +48,8 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
 
     /// The last running task, stored for potential cancellation.
     @State private var savedTask: Task<Void, Never>?
+
+    @Environment(\.isLoading) private var isLoading
 
     /// Creates a new asynchronous button with the given parameters.
     ///
@@ -93,9 +95,13 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
         ///   - isExecutingInternal: A Boolean value indicating whether the button's action is currently executing.
         ///   - isExecuting: The unique identifier of the currently executing action, if any.
         ///   - options: The options that define the button's behavior when it's tapped.
-        init(id: Identifier? = nil, isExecutingInternal: Bool, isExecuting: Identifier? = nil, options: AsyncButtonOptions) {
+        init(id: Identifier? = nil,
+             isExecutingInternal: Bool,
+             isExecuting: Identifier? = nil,
+             isLoadingEnvironment: Bool,
+             options: AsyncButtonOptions) {
             self.id = id
-            self.isButtonExecuting = isExecutingInternal || isExecuting == id
+            self.isButtonExecuting = isExecutingInternal || isExecuting == id || isLoadingEnvironment
             self.executingIdentifier = isExecuting
             self.options = options
         }
@@ -141,6 +147,7 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
             id: id,
             isExecutingInternal: isExecutingInternal,
             isExecuting: isExecuting,
+            isLoadingEnvironment: isLoading,
             options: options
         )
 
@@ -168,13 +175,14 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
                 }
             }
         }, label: { label })
+        .buttonStyle(.isLoading(disabledWhenLoading: false))
         .isLoading(state.isButtonLoading)
         .disabled(state.isButtonDisabled)
     }
 }
 
 /// An extension for AsyncButton with a default label of type Text.
-@available(macOS 10.15, *)
+@available(iOS 15.0, macOS 10.15, *)
 extension AsyncButton where Label == Text {
     
     /// Creates an asynchronous button with the given title and action.
@@ -196,7 +204,7 @@ extension AsyncButton where Label == Text {
 }
 
 /// An extension for AsyncButton with an empty identifier.
-@available(macOS 10.15, *)
+@available(iOS 15.0, macOS 10.15, *)
 extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier {
     
     /// Creates an asynchronous button with the given action, label, and binding for execution state.
@@ -240,7 +248,7 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier {
 }
 
 /// An extension for AsyncButton with an empty identifier and a default label of type Text.
-@available(macOS 10.15, *)
+@available(iOS 15.0, macOS 10.15, *)
 extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier, Label == Text {
     
     /// Creates an asynchronous button with the given title and action.

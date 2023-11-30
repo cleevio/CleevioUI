@@ -1,28 +1,28 @@
 import SwiftUI
 
 @available(macOS 10.15, *)
-public extension SolidButtonStyle where Background == Color, Overlay == RoundedStroke, LoadingView == CleevioUI.LoadingView {
+public extension SolidButtonStyle where Background == Color, Overlay == RoundedStroke {
     @inlinable
     init(
         foregroundColorSet: ButtonStateColorSet,
         backgroundColorSet: ButtonStateColorSet,
         strokeColorSet: ButtonStateColorSet,
-        loadingViewColor: Color,
         cornerRadius: CGFloat,
         labelPadding: EdgeInsets,
         font: Font?,
         width: CGFloat? = nil
     ) {
         self.init(
-            foreground: foregroundColorSet.color,
+            foreground: { state in
+                state.isLoading ? .clear : foregroundColorSet.color(state: state)
+            },
             background: backgroundColorSet.color,
-            overlay: {
+            overlay: { state in
                 RoundedStroke(
-                    color: strokeColorSet.color(isEnabled: $0, isPressed: $1),
+                    color: strokeColorSet.color(state: state),
                     cornerRadius: cornerRadius
                 )
             },
-            loadingView: { LoadingView(circleColor: loadingViewColor) },
             cornerRadius: cornerRadius,
             labelPadding: labelPadding,
             font: font,

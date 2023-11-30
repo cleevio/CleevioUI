@@ -2,13 +2,26 @@ import SwiftUI
 
 // TODO: Use ProgressViewStyle for loading view (or completely erase it from init and just have it being set on the project)
 
+public struct SolidButtonState {
+    public let isLoading: Bool
+    public let isEnabled: Bool
+    public let isPressed: Bool
+
+    @inlinable
+    public init(isLoading: Bool, isEnabled: Bool, isPressed: Bool) {
+        self.isLoading = isLoading
+        self.isEnabled = isEnabled
+        self.isPressed = isPressed
+    }
+}
+
 /// A custom button style that allows you to define the appearance of a button with various states and loading view.
 @available(macOS 10.15, *)
 public struct SolidButtonStyle<
     Background: View,
-    Overlay: View,
-    LoadingView: View
+    Overlay: View
 >: ButtonStyle {
+
     /// Defines the text color for different button states.
     ///
     /// - Parameters:
@@ -17,7 +30,7 @@ public struct SolidButtonStyle<
     ///
     /// - Returns: The color to use for the button's text.
     @usableFromInline
-    @ViewBuilder var foreground: (Bool, Bool) -> Color
+    @ViewBuilder var foreground: (SolidButtonState) -> Color
     ///  Defines the background view for different button states.
     ///
     /// - Parameters:
@@ -26,7 +39,7 @@ public struct SolidButtonStyle<
     ///
     /// - Returns: The background view for the button.
     @usableFromInline
-    @ViewBuilder var background: (Bool, Bool) -> Background
+    @ViewBuilder var background: (SolidButtonState) -> Background
     /// Defines the overlay view for different button states.
     ///
     /// - Parameters:
@@ -35,10 +48,8 @@ public struct SolidButtonStyle<
     ///
     /// - Returns: The overlay view for the button.
     @usableFromInline
-    @ViewBuilder var overlay: (Bool, Bool) -> Overlay
+    @ViewBuilder var overlay: (SolidButtonState) -> Overlay
     // The view used as a loading indicator.
-    @usableFromInline
-    let loadingView: LoadingView
     /// The corner radius of the button.
     @usableFromInline
     let cornerRadius: CGFloat
@@ -54,10 +65,9 @@ public struct SolidButtonStyle<
 
     @inlinable
     public init(
-        @ViewBuilder foreground: @escaping (Bool, Bool) -> Color,
-        @ViewBuilder background: @escaping (Bool, Bool) -> Background,
-        @ViewBuilder overlay: @escaping (Bool, Bool) -> Overlay,
-        @ViewBuilder loadingView: () -> LoadingView,
+        @ViewBuilder foreground: @escaping (SolidButtonState) -> Color,
+        @ViewBuilder background: @escaping (SolidButtonState) -> Background,
+        @ViewBuilder overlay: @escaping (SolidButtonState) -> Overlay,
         cornerRadius: CGFloat,
         labelPadding: EdgeInsets,
         font: Font?,
@@ -66,7 +76,6 @@ public struct SolidButtonStyle<
         self.foreground = foreground
         self.background = background
         self.overlay = overlay
-        self.loadingView = loadingView()
         self.cornerRadius = cornerRadius
         self.labelPadding = labelPadding
         self.font = font
@@ -75,20 +84,20 @@ public struct SolidButtonStyle<
 
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.isLoading) private var isLoading
+    
 
     public func makeBody(configuration: Configuration) -> some View {
+        let buttonState = SolidButtonState(isLoading: isLoading, isEnabled: isEnabled, isPressed: configuration.isPressed)
+
         configuration.label
             .disabled(isLoading)
             .frame(maxWidth: width)
             .padding(labelPadding)
-            .background(background(isEnabled, configuration.isPressed))
-            .foregroundColor(isLoading ? .clear : foreground(isEnabled, configuration.isPressed))
-            .overlay(overlay(isEnabled, configuration.isPressed))
+            .background(background(buttonState))
+            .foregroundColor(foreground(buttonState))
+            .overlay(overlay(buttonState))
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .contentShape(Rectangle())
             .font(font)
-            .overlay(if: isLoading) {
-                loadingView
-            }
     }
 }
