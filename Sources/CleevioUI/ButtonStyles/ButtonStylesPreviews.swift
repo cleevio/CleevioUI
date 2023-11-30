@@ -234,7 +234,7 @@ struct SolidButton_Previews: PreviewProvider {
             }
             .padding()
             .previewDisplayName("\(style)")
-            .progressViewStyle(DotProgressViewStyle(circleColor: style == .outline ? .black : .white))
+            .progressViewStyle(DotsProgressViewStyle(circleColor: style == .outline ? .black : .white))
         }
     }
 }

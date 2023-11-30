@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 @available(macOS 10.15, *)
-public struct DotProgressViewStyle: ProgressViewStyle {
+public struct DotsProgressViewStyle: ProgressViewStyle {
     var scale: CGFloat
     var spacing: CGFloat
     var dotDiameter: CGFloat
@@ -63,10 +63,12 @@ public struct DotProgressViewStyle: ProgressViewStyle {
 }
 
 @available(iOS 14.0, macOS 11.0, *)
-public extension ProgressViewStyle where Self == DotProgressViewStyle {
-    static var dot: Self { .dot() }
+public extension ProgressViewStyle where Self == DotsProgressViewStyle {
+    @inlinable
+    static var dots: Self { .dots() }
 
-    static func dot(scale: CGFloat = 1,
+    @inlinable
+    static func dots(scale: CGFloat = 1,
                     spacing: CGFloat = 10,
                     dotDiameter: CGFloat = 10,
                     dotCount: Int = 3,
@@ -83,9 +85,9 @@ public extension ProgressViewStyle where Self == DotProgressViewStyle {
 }
 
 @available(iOS 15.0, macOS 12.0, *)
-struct DotProgressViewStyle_Previews: PreviewProvider {
+struct DotsProgressViewStyle_Previews: PreviewProvider {
     static var previews: some View {
         ProgressView()
-            .progressViewStyle(.dot(circleColor: .black))
+            .progressViewStyle(.dots(circleColor: .black))
     }
 }
