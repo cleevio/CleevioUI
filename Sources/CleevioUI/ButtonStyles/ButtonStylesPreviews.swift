@@ -74,7 +74,7 @@ extension ButtonStyle where Self == SolidButtonStyle<Color, RoundedStroke> {
 }
 
 
-@available(iOS 15.0, macOS 11.0, *)
+@available(iOS 15.0, macOS 12.0, *)
 struct SolidButton_Previews: PreviewProvider {
     // swiftlint:disable closure_body_length
     enum SolidPreviewStyle {

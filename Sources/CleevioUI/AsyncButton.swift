@@ -25,7 +25,7 @@ public struct AsyncButtonOptions: OptionSet {
 /// A button that initiates an asynchronous action when tapped.
 ///
 /// This button is designed to handle concurrent or repeated taps by using the behaviors defined in `AsyncButtonOptions`.
-@available(iOS 15.0, macOS 10.15, *)
+@available(iOS 15.0, macOS 12.0, *)
 public struct AsyncButton<Label: View, Identifier: Equatable>: View {
 
     /// The unique identifier for the button.
@@ -182,7 +182,7 @@ public struct AsyncButton<Label: View, Identifier: Equatable>: View {
 }
 
 /// An extension for AsyncButton with a default label of type Text.
-@available(iOS 15.0, macOS 10.15, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension AsyncButton where Label == Text {
     
     /// Creates an asynchronous button with the given title and action.
@@ -204,7 +204,7 @@ extension AsyncButton where Label == Text {
 }
 
 /// An extension for AsyncButton with an empty identifier.
-@available(iOS 15.0, macOS 10.15, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier {
     
     /// Creates an asynchronous button with the given action, label, and binding for execution state.
@@ -248,7 +248,7 @@ extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier {
 }
 
 /// An extension for AsyncButton with an empty identifier and a default label of type Text.
-@available(iOS 15.0, macOS 10.15, *)
+@available(iOS 15.0, macOS 12.0, *)
 extension AsyncButton where Identifier == EmptyAsyncButtonIdentifier, Label == Text {
     
     /// Creates an asynchronous button with the given title and action.

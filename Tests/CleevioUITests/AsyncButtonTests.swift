@@ -115,6 +115,6 @@ final class AsyncButtonTests: XCTestCase {
         XCTAssertFalse(state.isNewExecutingAllowed, "It should not allow new execution with default options")
         XCTAssertFalse(state.shouldCancelPreviousTask, "It should not allow cancel previous task with default options")
         XCTAssertTrue(state.isButtonLoading, "Button should be in loading state with isLoadingEnvironment is true.")
-        XCTAssertTrue(state.isButtonLoading, "Button should be in loading state when isLoadingEnvironment is true.")
+        XCTAssertFalse(state.isButtonDisabled, "Button should be in loading state when isLoadingEnvironment is true.")
     }
 }
