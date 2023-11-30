@@ -1,5 +1,5 @@
 //
-//  LoadingView.swift
+//  DotsProgressViewStyle.swift
 //  CleevioUI
 //
 //  Created by Diego on 10/01/22.
