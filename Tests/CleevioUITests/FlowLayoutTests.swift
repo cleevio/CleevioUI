@@ -166,7 +166,12 @@ final class FlowLayoutTests: XCTestCase {
         XCTAssertEqual(calculatedLayout.frames[0].origin.x, 0)
         XCTAssertEqual(calculatedLayout.frames[1].origin.x, 58) // 50 (width of the first subview) + 8 (spacing)
         XCTAssertEqual(calculatedLayout.frames[2].origin.x, 0) //
-        XCTAssertEqual(calculatedLayout.frames[3].origin.x, 68) // 60 (width of the third subview) + 8 (spacing
+        XCTAssertEqual(calculatedLayout.frames[3].origin.x, 68) // 60 (width of the third subview) + 8 (spacing)
+
+        XCTAssertEqual(calculatedLayout.frames[0].origin.y, 0) // first row
+        XCTAssertEqual(calculatedLayout.frames[1].origin.y, 0) // first row
+        XCTAssertEqual(calculatedLayout.frames[2].origin.y, 48) // height of second row (tallest of first row) + 8 (spacing)
+        XCTAssertEqual(calculatedLayout.frames[3].origin.y, 48) // height of second row (tallest of first row) + 8 (spacing)
     }
 
     func testCalculatedLayoutBuilder_AlignmentTrailing_MultipleSubviews() {
@@ -195,6 +200,11 @@ final class FlowLayoutTests: XCTestCase {
         XCTAssertEqual(calculatedLayout.frames[1].origin.x, 58) // 50 (width of the first subview) + 8 (spacing)
         XCTAssertEqual(calculatedLayout.frames[2].origin.x, 5) // Different origin due to row 3 being shorter by 5
         XCTAssertEqual(calculatedLayout.frames[3].origin.x, 73) // 5 (origin of the third subview) + 60 (width of the third subview) + 8 (spacing)
+
+        XCTAssertEqual(calculatedLayout.frames[0].origin.y, 0) // first row
+        XCTAssertEqual(calculatedLayout.frames[1].origin.y, 0) // first row
+        XCTAssertEqual(calculatedLayout.frames[2].origin.y, 48) // height of second row (tallest of first row) + 8 (spacing)
+        XCTAssertEqual(calculatedLayout.frames[3].origin.y, 48) // height of second row (tallest of first row) + 8 (spacing)
     }
 
     func testCalculatedLayoutBuilder_AlignmentCenter_MultipleSubviews() {
@@ -223,6 +233,11 @@ final class FlowLayoutTests: XCTestCase {
         XCTAssertEqual(calculatedLayout.frames[1].origin.x, 58) // 50 (width of the first subview) + 8 (spacing)
         XCTAssertEqual(calculatedLayout.frames[2].origin.x, 2.5) // Different origin due to row 3 being shorter by 5 (5/2)
         XCTAssertEqual(calculatedLayout.frames[3].origin.x, 70.5) // 2.5 (origin of the third subview) + 60 (width of the third subview) + 8 (spacing)
+
+        XCTAssertEqual(calculatedLayout.frames[0].origin.y, 0) // first row
+        XCTAssertEqual(calculatedLayout.frames[1].origin.y, 0) // first row
+        XCTAssertEqual(calculatedLayout.frames[2].origin.y, 48) // height of second row (tallest of first row) + 8 (spacing)
+        XCTAssertEqual(calculatedLayout.frames[3].origin.y, 48) // height of second row (tallest of first row) + 8 (spacing)
     }
 
 }
