@@ -23,7 +23,6 @@ import SwiftUI
  - `makeCache(subviews:) -> Cache`: Creates and returns an initial cache for layout calculations.
  - `sizeThatFits(proposal:subviews:cache:) -> CGSize`: Calculates and returns the size that fits the specified constraints.
  - `placeSubviews(in:proposal:subviews:cache:)`: Positions the subviews within the given bounds using the cached layout information.
- - `calculatedLayout(for:in:) -> CalculatedLayout`: Calculates and returns the layout information based on the provided subviews and total width.
 
  ## Types
  - `CalculatedLayout`: Represents the calculated layout information, including subview frames and the overall size.
@@ -36,7 +35,7 @@ import SwiftUI
  - FlowLayout always vertically aligns views in one row to top, this behavior can be considered to be updated later on.
  */
 @available(iOS 16.0, *)
-struct FlowLayout: Layout {
+public struct FlowLayout: Layout {
     let alignment: HorizontalAlignment
     let spacing: CGFloat
 
@@ -46,17 +45,17 @@ struct FlowLayout: Layout {
         self.spacing = spacing
     }
     
-    typealias Cache = CalculatedLayout
+    public typealias Cache = CalculatedLayout
     
-    func makeCache(subviews: Subviews) -> Cache {
+    public func makeCache(subviews: Subviews) -> Cache {
         CalculatedLayout(frames: [], size: .zero)
     }
 
-    struct CalculatedLayout {
+    public struct CalculatedLayout {
         var frames: [CGRect]
         var size: CGSize
 
-        init(frames: [CGRect], size: CGSize) {
+        public init(frames: [CGRect], size: CGSize) {
             self.frames = frames
             self.size = size
         }
@@ -75,11 +74,21 @@ struct FlowLayout: Layout {
         ///   )
         ///   let calculatedLayout = builder.calculatedLayout()
         ///   ```
-        struct Builder {
+        public struct Builder {
             let subviewSizes: [CGSize]
             let totalWidth: Double
             let alignment: HorizontalAlignment
             let spacing: CGFloat
+
+            public init(subviewSizes: [CGSize],
+                        totalWidth: Double,
+                        alignment: HorizontalAlignment,
+                        spacing: CGFloat) {
+                self.subviewSizes = subviewSizes
+                self.totalWidth = totalWidth
+                self.alignment = alignment
+                self.spacing = spacing
+            }
 
             struct Row {
                 var sizes: [CGSize]
@@ -99,7 +108,7 @@ struct FlowLayout: Layout {
 
              - Returns: A `CalculatedLayout` instance representing the calculated layout information.
              */
-            func calculatedLayout() -> CalculatedLayout {
+            public func calculatedLayout() -> CalculatedLayout {
                 let (rows, totalUsedWidth) = calculatedRows(from: subviewSizes, totalWidth: totalWidth)
                 let (frames, height) = calculatedFrames(for: rows, totalUsedWidth: totalUsedWidth)
                 
@@ -230,7 +239,7 @@ struct FlowLayout: Layout {
         }
     }
     
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
         let width = proposal.replacingUnspecifiedDimensions().width
         let calculatedLayout = calculatedLayout(for: subviews, in: width)
         
@@ -239,7 +248,7 @@ struct FlowLayout: Layout {
         return calculatedLayout.size
     }
     
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
+    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
         if cache.size != bounds.size {
             let calculatedLayout = calculatedLayout(for: subviews, in: bounds.width)
             cache.set(with: calculatedLayout)
