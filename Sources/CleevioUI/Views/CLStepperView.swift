@@ -100,7 +100,7 @@ public struct CLStepperView: View {
             Spacer()
             if isLoading {
                 ProgressView()
-                    .progressViewStyle(DotProgressViewStyle(scale: loadingScale))
+                    .progressViewStyle(DotsProgressViewStyle(scale: loadingScale))
                     .frame(width: 50, height: 10)
             } else {
                 Text("\(quantity)")
