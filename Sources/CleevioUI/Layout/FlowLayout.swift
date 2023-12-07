@@ -31,6 +31,9 @@ import SwiftUI
 
  ## Initializers
  - `init(alignment:spacing:)`: Convenience initializer to create a flow layout with specified alignment and spacing.
+ 
+ ## Note
+ - FlowLayout always vertically aligns views in one row to top, this behavior can be considered to be updated later on.
  */
 @available(iOS 16.0, *)
 struct FlowLayout: Layout {
