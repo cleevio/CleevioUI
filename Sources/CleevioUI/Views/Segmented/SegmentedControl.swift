@@ -280,7 +280,7 @@ public struct RoundedLineIndicator: View {
     public var body: some View {
         VStack {
             Spacer()
-            RoundedRectangle(cornerRadius: configuration.cornerRadius)
+            RoundedRectangle(cornerRadius: configuration.cornerRadius, style: .continuous)
                 .fill(configuration.fill)
                 .frame(width: configuration.width, height: configuration.height, alignment: .center)
                 .frame(maxWidth: .infinity)

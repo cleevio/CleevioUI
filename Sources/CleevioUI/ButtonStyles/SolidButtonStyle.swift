@@ -96,7 +96,7 @@ public struct StateButtonStyle<
             .background(background(buttonState))
             .foregroundColor(foreground(buttonState))
             .overlay(overlay(buttonState))
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             .contentShape(Rectangle())
             .font(font)
     }

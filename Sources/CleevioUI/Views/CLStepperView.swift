@@ -83,7 +83,7 @@ public struct CLStepperView: View {
                     quantity -= 1
                 }
             }, label: {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .style(
                         withStroke: Color(.systemBlue),
                         lineWidth: style == .minimal ? 2 : 0,
@@ -111,7 +111,7 @@ public struct CLStepperView: View {
             Button(action: {
                 quantity += 1
             }, label: {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .style(
                         withStroke: Color(.systemBlue),
                         lineWidth: style == .minimal ? 2 : 0,
