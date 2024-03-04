@@ -7,6 +7,7 @@ public extension StateButtonStyle where Background == Color, Overlay == RoundedS
         foregroundColorSet: ButtonStateColorSet,
         backgroundColorSet: ButtonStateColorSet,
         strokeColorSet: ButtonStateColorSet,
+        strokeWidth: CGFloat = 1,
         cornerRadius: CGFloat,
         labelPadding: EdgeInsets,
         font: Font?,
@@ -20,7 +21,8 @@ public extension StateButtonStyle where Background == Color, Overlay == RoundedS
             overlay: { state in
                 RoundedStroke(
                     color: strokeColorSet.color(state: state),
-                    cornerRadius: cornerRadius
+                    cornerRadius: cornerRadius,
+                    lineWidth: strokeWidth
                 )
             },
             cornerRadius: cornerRadius,

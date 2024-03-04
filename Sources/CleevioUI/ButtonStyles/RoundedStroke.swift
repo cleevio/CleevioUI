@@ -18,7 +18,7 @@ public struct RoundedStroke: View {
     }
 
     public var body: some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
             .stroke(color, lineWidth: lineWidth)
     }
 }
