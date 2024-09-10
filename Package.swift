@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "CleevioUI",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v13), .watchOS(.v8)
     ],
     products: [
         .library(

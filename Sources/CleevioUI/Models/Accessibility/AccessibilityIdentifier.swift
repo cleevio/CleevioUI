@@ -69,7 +69,7 @@ public extension View {
     }
 }
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 public extension UIView {
     @inlinable
     func withAccessibilityIdentifier(_ identifier: AccessibilityIdentifier) -> Self {

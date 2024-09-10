@@ -116,7 +116,7 @@ public struct SegmentedControl<Segment: Selectable, ButtonView: View, Indicator:
         case .always:
             buttonsScrollView
         case .ifNeeded:
-            if #available(iOS 16.0, macOS 13.0, *) {
+            if #available(iOS 16.0, macOS 13.0, watchOS 9, *) {
                 ViewThatFits(in: .horizontal) {
                     buttonsView
                         .scaledToFit()
@@ -134,7 +134,7 @@ public struct SegmentedControl<Segment: Selectable, ButtonView: View, Indicator:
 
     /// A scrollable view for the segmented control buttons.
     @ViewBuilder var buttonsScrollView: some View {
-        if #available(iOS 16.0, macOS 13.0, *) {
+        if #available(iOS 16.0, macOS 13.0, watchOS 9, *) {
             ScrollView(.horizontal) {
                 buttonsView
             }

@@ -54,7 +54,7 @@ public struct FloatingProgressViewStyle<
     }
 }
 
-@available(macOS 12.0, iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 10, *)
 public extension ProgressViewStyle where Self == FloatingProgressViewStyle<Circle, Material, HierarchicalShapeStyle> {
     
     /// Initializes the FloatingProgressViewStyle with default parameters.
@@ -62,7 +62,7 @@ public extension ProgressViewStyle where Self == FloatingProgressViewStyle<Circl
     static var floating: Self { self.init() }
 }
 
-@available(macOS 12.0, iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 10, *)
 public extension FloatingProgressViewStyle<Circle, Material, HierarchicalShapeStyle> {
     
     /// Initializes the FloatingProgressViewStyle with default parameters.
@@ -70,7 +70,7 @@ public extension FloatingProgressViewStyle<Circle, Material, HierarchicalShapeSt
     init() { self.init(configuration: .init()) }
 }
 
-@available(macOS 12.0, iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 10, *)
 public extension FloatingProgressViewStyle<Circle, Material, HierarchicalShapeStyle>.StyleConfiguration {
     
     /// Initializes the Configuration with default parameters.
@@ -91,7 +91,7 @@ public extension FloatingProgressViewStyle<Circle, Material, HierarchicalShapeSt
     }
 }
 
-@available(iOS 15.0, macOS 12.0, *)
+@available(iOS 15.0, macOS 12.0, watchOS 10, *)
 struct FloatingProgressViewStyle_Previews: PreviewProvider {
     static var previews: some View {
         Color.red

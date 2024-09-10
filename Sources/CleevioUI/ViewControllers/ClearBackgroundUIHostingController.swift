@@ -6,7 +6,7 @@
 //
 
 import Foundation
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 
 open class ClearBackgroundUIHostingController<Content: View>: UIHostingController<Content> {

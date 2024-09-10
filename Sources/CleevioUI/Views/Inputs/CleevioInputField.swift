@@ -318,7 +318,7 @@ public extension CleevioInputField where Content == CleevioTextField<RevealTextF
             placeholder: { state in
                 let color: Color = placeholderColorSet.resolve(state)
                 return placeholder.map {
-                    if #available(iOS 17.0, macOS 14.0, *) {
+                    if #available(iOS 17.0, macOS 14.0,  watchOS 10, *) {
                         Text($0).foregroundStyle(color).font(configuration.font)
                     } else {
                         Text($0).foregroundColor(color).font(configuration.font)

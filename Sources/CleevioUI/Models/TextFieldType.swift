@@ -18,7 +18,7 @@ public enum TextFieldType {
     case numberPad
 }
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 
 extension TextFieldType {

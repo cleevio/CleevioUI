@@ -5,7 +5,7 @@
 //  Created by Lukáš Valenta on 22.06.2023.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 
 public extension UIWindow {

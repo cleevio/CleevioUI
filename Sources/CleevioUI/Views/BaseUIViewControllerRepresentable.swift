@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 public struct BaseUIViewControllerRepresentable: UIViewControllerRepresentable {
     public let viewController: UIViewController
 

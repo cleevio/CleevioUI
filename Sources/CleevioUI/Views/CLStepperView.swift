@@ -5,7 +5,7 @@
 //  Created by Diego on 25/01/22.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 
 // TODO: consider better support of custom set styles (and with that, remove isLoading entirely, isDisabled should be driven only through Environment(\.isEnabled)

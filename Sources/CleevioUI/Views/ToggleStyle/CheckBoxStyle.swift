@@ -54,7 +54,7 @@ public struct CheckBoxStyle<CheckBox: View>: ToggleStyle {
         /// Provides an abstract layout for conditional layout handling.
         ///
         /// - Returns: An abstract layout for the checkbox.
-        @available(iOS 16.0, macOS 13.0, *)
+        @available(iOS 16.0, macOS 13.0, watchOS 9, *)
         var anyLayout: AnyLayout {
             switch layout {
             case let .horizontal(alignment):
@@ -82,7 +82,7 @@ public struct CheckBoxStyle<CheckBox: View>: ToggleStyle {
 
     /// Creates the body of the checkbox.
     public func makeBody(configuration: ToggleStyle.Configuration) -> some View {
-        if #available(iOS 16.0, macOS 13.0, *) {
+        if #available(iOS 16.0, macOS 13.0, watchOS 9, *) {
             viewConfiguration.anyLayout {
                 InnerView(checkBox: view(configuration.isOn), viewConfiguration: viewConfiguration, configuration: configuration)
             }
