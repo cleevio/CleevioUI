@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct InputFieldState {
+public struct InputFieldState: Equatable, Hashable, Codable {
     public var isFocused: Bool
     public var isEnabled: Bool
     public var isError: Bool
