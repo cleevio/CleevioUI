@@ -61,6 +61,9 @@ public struct CleevioInputField<
         var contentPadding: EdgeInsets
         var font: Font?
 
+        /// Condition defining when the error label should be presented.
+        let errorPresentationCondition: (_ isFocused: Bool, _ error: String?) -> Bool
+
         public init(
             @ViewBuilder title: @escaping (InputFieldState) -> Title,
             @ViewBuilder foreground: @escaping (InputFieldState) -> Color,
@@ -79,12 +82,37 @@ public struct CleevioInputField<
             self.isExternallyFocused = isFocused
             self.contentPadding = contentPadding
             self.font = font
+
+            self.errorPresentationCondition = { _, error in error != nil }
+        }
+
+        public init(
+            @ViewBuilder title: @escaping (InputFieldState) -> Title,
+            @ViewBuilder foreground: @escaping (InputFieldState) -> Color,
+            @ViewBuilder background: @escaping (InputFieldState) -> Background,
+            @ViewBuilder overlay: @escaping (InputFieldState) -> Overlay,
+            @ViewBuilder errorLabel: @escaping (String) -> ErrorLabel,
+            isFocused: Bool,
+            contentPadding: EdgeInsets,
+            font: Font?,
+            errorPresentationCondition: @escaping (_ isFocused: Bool, _ error: String?) -> Bool
+        ) {
+            self.title = title
+            self.foreground = foreground
+            self.background = background
+            self.overlay = overlay
+            self.errorLabel = errorLabel
+            self.isExternallyFocused = isFocused
+            self.contentPadding = contentPadding
+            self.font = font
+
+            self.errorPresentationCondition = errorPresentationCondition
         }
     }
 
     @usableFromInline
     @ViewBuilder var content: (InputFieldState) -> Content
-    
+
     public var configuration: Configuration
 
     @FocusState private var isFocused: Bool
@@ -101,11 +129,16 @@ public struct CleevioInputField<
     }
 
     var state: InputFieldState {
-        .init(
-            isFocused: isFocused || configuration.isExternallyFocused,
+        let isFocused = isFocused || configuration.isExternallyFocused
+        return .init(
+            isFocused: isFocused,
             isEnabled: isEnabled,
-            isError: error != nil
+            isError: configuration.errorPresentationCondition(isFocused, error)
         )
+    }
+
+    var isErrorPresented: Bool {
+        state.isError
     }
 
     public var body: some View {
@@ -122,7 +155,7 @@ public struct CleevioInputField<
                     isFocused = true
                 }
 
-            if let error {
+            if isErrorPresented, let error {
                 configuration.errorLabel(error)
                     .transition(
                         .asymmetric(
@@ -135,7 +168,7 @@ public struct CleevioInputField<
         .foregroundStyle(configuration.foreground(state))
         .tint(configuration.foreground(state))
         .font(configuration.font)
-        .animation(.default, value: error)
+        .animation(.default, value: isErrorPresented)
         .animation(.easeInOut, value: state.isFocused)
         .animation(.easeInOut, value: isEnabled)
     }
