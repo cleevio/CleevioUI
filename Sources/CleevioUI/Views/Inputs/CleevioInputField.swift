@@ -145,24 +145,21 @@ public struct CleevioInputField<
         VStack(alignment: .leading, spacing: 6) {
             configuration.title(state)
 
-            content(state)
-                .focused($isFocused)
-                .padding(configuration.contentPadding)
-                .background(configuration.background(state))
-                .overlay { configuration.overlay(state) }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    isFocused = true
-                }
+            VStack(alignment: .leading, spacing: .zero) {
+                content(state)
+                    .focused($isFocused)
+                    .padding(configuration.contentPadding)
+                    .background(configuration.background(state))
+                    .overlay { configuration.overlay(state) }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        isFocused = true
+                    }
 
-            if isErrorPresented, let error {
-                configuration.errorLabel(error)
-                    .transition(
-                        .asymmetric(
-                            insertion: .move(edge: .leading),
-                            removal: .move(edge: .leading)
-                        )
-                    )
+                configuration.errorLabel(error ?? "")
+                    .opacity(isErrorPresented ? 1 : 0)
+                    .frame(height: isErrorPresented ? nil : 0)
+                    .padding(.top, isErrorPresented ? 6 : 0)
             }
         }
         .foregroundStyle(configuration.foreground(state))
