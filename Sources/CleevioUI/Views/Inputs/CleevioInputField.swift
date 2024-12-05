@@ -144,13 +144,10 @@ public struct CleevioInputField<
         )
     }
 
-    var isErrorPresented: Bool {
-        state.isError
-    }
-
     public var body: some View {
+        let state = state
+
         VStack(alignment: .leading, spacing: 6) {
-            let state = state
             configuration.title(state)
 
             VStack(alignment: .leading, spacing: .zero) {
@@ -165,16 +162,15 @@ public struct CleevioInputField<
                     }
 
                 configuration.errorLabel(error ?? "")
-                    .opacity(isErrorPresented ? 1 : 0)
-                    .frame(height: isErrorPresented ? nil : 0)
-                    .padding(.top, isErrorPresented ? 6 : 0)
+                    .opacity(state.isError ? 1 : 0)
+                    .frame(height: state.isError ? nil : 0)
+                    .padding(.top, state.isError ? 6 : 0)
             }
         }
         .foregroundStyle(configuration.foreground(state))
         .tint(configuration.foreground(state))
         .font(configuration.font)
-        .animation(.default, value: isErrorPresented)
-        .animation(.easeInOut, value: state.isFocused)
+        .animation(.default, value: self.state)
         .animation(.easeInOut, value: isEnabled)
     }
 }
