@@ -143,6 +143,7 @@ public struct CleevioInputField<
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 6) {
+            let state = state
             configuration.title(state)
 
             VStack(alignment: .leading, spacing: .zero) {
