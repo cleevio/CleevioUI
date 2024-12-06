@@ -1,5 +1,22 @@
 import SwiftUI
 
+/// A structure representing the setting of an input field.
+public struct CleevioInputFieldOptions: OptionSet, Hashable, Sendable {
+    public let rawValue: UInt8
+
+    public init(rawValue: UInt8) {
+        self.rawValue = rawValue
+    }
+
+    /// Hides the error label when the input field is disabled.
+    public static let hideErrorIfDisabled = CleevioInputFieldOptions(rawValue: 1 << 1)
+    /// Hides the error label when the input field is focused.
+    public static let hideErrorIfFocused = CleevioInputFieldOptions(rawValue: 1 << 2)
+
+    /// The default options for the input field
+    public static let `default`: Self = []
+}
+
 /// A customizable input field style serving as a wrapper for various types such as `TextField` or `Picker`.
 ///
 /// This structure provides a way to define the appearance and behavior of input fields, including customizability based on different states such as focused, enabled, or error.
@@ -50,16 +67,19 @@ public struct CleevioInputField<
     ErrorLabel: View
 >: View {
     public struct Configuration {
-        @ViewBuilder var title: (InputFieldState) -> Title
-        @ViewBuilder var foreground: (InputFieldState) -> Color
-        @ViewBuilder var background: (InputFieldState) -> Background
-        @ViewBuilder var overlay: (InputFieldState) -> Overlay
-        @ViewBuilder var errorLabel: (String) -> ErrorLabel
+        @ViewBuilder let title: (InputFieldState) -> Title
+        @ViewBuilder let foreground: (InputFieldState) -> Color
+        @ViewBuilder let background: (InputFieldState) -> Background
+        @ViewBuilder let overlay: (InputFieldState) -> Overlay
+        @ViewBuilder let errorLabel: (String) -> ErrorLabel
 
         /// When @FocusState is not available, this value is used to invoke focus state appearance/behavior
-        var isExternallyFocused: Bool = false
-        var contentPadding: EdgeInsets
-        var font: Font?
+        let isExternallyFocused: Bool
+        let contentPadding: EdgeInsets
+        let font: Font?
+
+        /// The configuration options for the input field.
+        let options: CleevioInputFieldOptions
 
         public init(
             @ViewBuilder title: @escaping (InputFieldState) -> Title,
@@ -69,7 +89,8 @@ public struct CleevioInputField<
             @ViewBuilder errorLabel: @escaping (String) -> ErrorLabel,
             isFocused: Bool,
             contentPadding: EdgeInsets,
-            font: Font?
+            font: Font?,
+            options: CleevioInputFieldOptions = .default
         ) {
             self.title = title
             self.foreground = foreground
@@ -79,12 +100,13 @@ public struct CleevioInputField<
             self.isExternallyFocused = isFocused
             self.contentPadding = contentPadding
             self.font = font
+            self.options = options
         }
     }
 
     @usableFromInline
     @ViewBuilder var content: (InputFieldState) -> Content
-    
+
     public var configuration: Configuration
 
     @FocusState private var isFocused: Bool
@@ -101,42 +123,54 @@ public struct CleevioInputField<
     }
 
     var state: InputFieldState {
-        .init(
-            isFocused: isFocused || configuration.isExternallyFocused,
+        let isFocused = isFocused || configuration.isExternallyFocused
+        let isError: Bool = {
+            guard error != nil else {
+                return false
+            }
+            if configuration.options.contains(.hideErrorIfFocused) && isFocused {
+                return false
+            }
+            if configuration.options.contains(.hideErrorIfDisabled) && !isEnabled {
+                return false
+            }
+            return true
+        }()
+
+        return .init(
+            isFocused: isFocused,
             isEnabled: isEnabled,
-            isError: error != nil
+            isError: isError
         )
     }
 
     public var body: some View {
+        let state = state
+
         VStack(alignment: .leading, spacing: 6) {
             configuration.title(state)
 
-            content(state)
-                .focused($isFocused)
-                .padding(configuration.contentPadding)
-                .background(configuration.background(state))
-                .overlay { configuration.overlay(state) }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    isFocused = true
-                }
+            VStack(alignment: .leading, spacing: .zero) {
+                content(state)
+                    .focused($isFocused)
+                    .padding(configuration.contentPadding)
+                    .background(configuration.background(state))
+                    .overlay { configuration.overlay(state) }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        isFocused = true
+                    }
 
-            if let error {
-                configuration.errorLabel(error)
-                    .transition(
-                        .asymmetric(
-                            insertion: .move(edge: .leading),
-                            removal: .move(edge: .leading)
-                        )
-                    )
+                configuration.errorLabel(error ?? "")
+                    .opacity(state.isError ? 1 : 0)
+                    .frame(height: state.isError ? nil : 0)
+                    .padding(.top, state.isError ? 6 : 0)
             }
         }
         .foregroundStyle(configuration.foreground(state))
         .tint(configuration.foreground(state))
         .font(configuration.font)
-        .animation(.default, value: error)
-        .animation(.easeInOut, value: state.isFocused)
+        .animation(.default, value: self.state)
         .animation(.easeInOut, value: isEnabled)
     }
 }
