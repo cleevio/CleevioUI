@@ -181,6 +181,7 @@ public extension CleevioInputField.Configuration where Content: View, Title: Vie
     /// )
     /// ```
     ///
+    @MainActor
     init(
         title: @escaping (InputFieldState) -> Title,
         foregroundColorSet: InputFieldStateColorSet,

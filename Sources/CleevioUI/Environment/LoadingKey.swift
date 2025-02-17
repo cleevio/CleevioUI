@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct LoadingKey: EnvironmentKey {
-    public static var defaultValue: Bool = false
+    public static let defaultValue: Bool = false
 }
 
 @available(macOS 10.15, *)
