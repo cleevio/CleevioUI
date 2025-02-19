@@ -1,7 +1,7 @@
 import SwiftUI
 
 public struct StringErrorKey: EnvironmentKey {
-    public static var defaultValue: String?
+    public static let defaultValue: String? = nil
 }
 
 @available(macOS 10.15, *)

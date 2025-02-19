@@ -34,7 +34,7 @@ import SwiftUI
  ## Note
  - FlowLayout always vertically aligns views in one row to top, this behavior can be considered to be updated later on.
  */
-@available(iOS 16.0, watchOS 9, *)
+@available(iOS 16.0, macOS 13.0, watchOS 9, *)
 public struct FlowLayout: Layout {
     let alignment: HorizontalAlignment
     let spacing: CGFloat
@@ -281,7 +281,7 @@ public struct FlowLayout: Layout {
 }
 
 #if DEBUG
-@available(iOS 16.0, watchOS 10, *)
+@available(iOS 16.0, macOS 13.0, watchOS 10, *)
 struct FlowLayout_Previews: PreviewProvider {
     static var previews: some View {
         ScrollView {

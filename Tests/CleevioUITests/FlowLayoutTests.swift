@@ -9,7 +9,7 @@ import XCTest
 @testable import CleevioUI
 import SwiftUI
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 final class FlowLayoutTests: XCTestCase {
     func testCalculatedLayoutBuilder() {
         // Given

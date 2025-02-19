@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// An option set that defines behaviors for `AsyncButton`.
-public struct AsyncButtonOptions: OptionSet {
+public struct AsyncButtonOptions: OptionSet, Sendable {
     public let rawValue: UInt
 
     public init(rawValue: UInt) {

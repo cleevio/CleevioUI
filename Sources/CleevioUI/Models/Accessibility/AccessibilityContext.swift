@@ -10,7 +10,7 @@ import SwiftUI
 // MARK: - Environment keys
 
 public struct AccessibilityContextKey: EnvironmentKey {
-    public static var defaultValue: String?
+    public static let defaultValue: String? = nil
 }
 
 @available(macOS 10.15, *)
