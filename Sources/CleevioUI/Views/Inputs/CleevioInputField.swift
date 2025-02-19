@@ -118,6 +118,7 @@ public struct CleevioInputField<
     @FocusState private var isFocused: Bool
     @Environment(\.stringError) private var error: String?
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.colorScheme) private var colorScheme
 
     @inlinable
     public init(
@@ -161,6 +162,12 @@ public struct CleevioInputField<
                     contentView
                         .onTapGesture {
                             isFocused = true
+                        }
+                        // Defocus on color scheme change.
+                        // This is a workaround for a bug in SwiftUI, where textfield foreground color is sometimes not updated when it is focused
+                        // and color scheme changes.
+                        .onChange(of: colorScheme) { _ in
+                            isFocused = false
                         }
                 } else {
                     contentView
