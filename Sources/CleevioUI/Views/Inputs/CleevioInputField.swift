@@ -8,13 +8,15 @@ public struct CleevioInputFieldOptions: OptionSet, Hashable, Sendable {
         self.rawValue = rawValue
     }
 
+    /// Adds tap gesture on content to handle focus.
+    public static let handlesFocus = CleevioInputFieldOptions(rawValue: 1 << 0)
     /// Hides the error label when the input field is disabled.
     public static let hideErrorIfDisabled = CleevioInputFieldOptions(rawValue: 1 << 1)
     /// Hides the error label when the input field is focused.
     public static let hideErrorIfFocused = CleevioInputFieldOptions(rawValue: 1 << 2)
 
     /// The default options for the input field
-    public static let `default`: Self = []
+    public static let `default`: Self = [.handlesFocus]
 }
 
 /// A customizable input field style serving as a wrapper for various types such as `TextField` or `Picker`.
@@ -80,6 +82,10 @@ public struct CleevioInputField<
 
         /// The configuration options for the input field.
         let options: CleevioInputFieldOptions
+
+        var shouldHandleFocus: Bool {
+            options.contains(.handlesFocus)
+        }
 
         public init(
             @ViewBuilder title: @escaping (InputFieldState) -> Title,
@@ -151,15 +157,14 @@ public struct CleevioInputField<
             configuration.title(state)
 
             VStack(alignment: .leading, spacing: .zero) {
-                content(state)
-                    .focused($isFocused)
-                    .padding(configuration.contentPadding)
-                    .background(configuration.background(state))
-                    .overlay { configuration.overlay(state) }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        isFocused = true
-                    }
+                if configuration.shouldHandleFocus {
+                    contentView
+                        .onTapGesture {
+                            isFocused = true
+                        }
+                } else {
+                    contentView
+                }
 
                 configuration.errorLabel(error ?? "")
                     .opacity(state.isError ? 1 : 0)
@@ -172,6 +177,15 @@ public struct CleevioInputField<
         .font(configuration.font)
         .animation(.default, value: self.state)
         .animation(.easeInOut, value: isEnabled)
+    }
+
+    private var contentView: some View {
+        content(state)
+            .focused($isFocused)
+            .padding(configuration.contentPadding)
+            .background(configuration.background(state))
+            .overlay { configuration.overlay(state) }
+            .contentShape(Rectangle())
     }
 }
 
